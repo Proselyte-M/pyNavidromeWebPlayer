@@ -28,7 +28,7 @@ def cache_cover_art(cover_art_id, token, salt):
     # 使用 cover_art_id 的前四个字符作为子目录名
     subdir = cover_art_id[:5]
     cover_dir = os.path.join(CACHE_DIR, subdir)
-    cover_path = os.path.join(cover_dir, f'{cover_art_id}.jpg')
+    cover_path = os.path.join(cover_dir, f'{cover_art_id}.webp')  # 修改文件后缀为 .webp
 
     # 检查缓存目录是否存在，不存在则创建
     if not os.path.exists(cover_dir):
@@ -43,11 +43,17 @@ def cache_cover_art(cover_art_id, token, salt):
                 'v': API_VERSION,
                 'c': CLIENT_NAME,
                 'id': cover_art_id,
-                'size': '300'
+                'size': '300',
+                'f': 'webp'  # 指定获取的图片格式为 WebP
             })
             response.raise_for_status()
             with open(cover_path, 'wb') as f:
                 f.write(response.content)
+
+            # 如果需要转换为 WebP 格式，可以添加以下代码（需要安装 Pillow 库）
+            # image = Image.open(cover_path)
+            # image.save(cover_path, 'webp')
+
         except requests.RequestException as e:
             logging.error(f"获取封面图片失败: {e}")
             return None
@@ -60,18 +66,20 @@ def cover(cover_art_id):
     cover_path = cache_cover_art(cover_art_id, token, salt)
     if cover_path and os.path.exists(cover_path):
         subdir = cover_art_id[:5]
-        return send_from_directory(os.path.join(CACHE_DIR, subdir), f'{cover_art_id}.jpg')
+        return send_from_directory(os.path.join(CACHE_DIR, subdir), f'{cover_art_id}.webp')  # 返回 .webp 格式的图片
     else:
         return jsonify({'status': 'error', 'message': 'Cover art not found'}), 404
-
+    
 @app.route('/')
 def index():
     return render_template('index.html')
 
-@app.route('/get_albums')
-def get_albums():
+@app.route('/get_albums/<page>')
+def get_albums(page):
     token, salt = generate_token(PASSWORD)
-
+    number = int(page)
+    result = number * 20
+    page = str(result)
     try:
         response = requests.get(f'{SUBSONIC_API_URL}/getAlbumList.view', params={
             'u': USERNAME,
@@ -80,8 +88,9 @@ def get_albums():
             'v': API_VERSION,
             'c': CLIENT_NAME,
             'f': 'json',
-            'type': 'random',
-            'size': '20'
+            'type': 'newest',
+            'size': '20',
+            'offset': page
         })
         response.raise_for_status()
         if response.json()['subsonic-response']['status'] == 'ok':
@@ -93,6 +102,7 @@ def get_albums():
     except requests.RequestException as e:
         logging.error(f"Failed to get albums: {e}")
         return jsonify({'status': 'error', 'message': 'Failed to get albums'})
+
 
 @app.route('/get_album_details/<album_id>')
 def get_album_details(album_id):
@@ -118,6 +128,20 @@ def get_album_details(album_id):
     except requests.RequestException as e:
         logging.error(f"Failed to get album details: {e}")
         return jsonify({'status': 'error', 'message': 'Failed to get album details'})
+
+@app.route('/albums/<album_id>')
+def albums(album_id):
+    return render_template('index.html', album_id=album_id)
+
+@app.route('/artist/<artist_id>')
+def artist(artist_id):
+    return render_template('index.html', artist_id=artist_id)
+
+@app.route('/albumlist/<page>')
+def albumlist(page):
+    return render_template('index.html', page=page)
+
+
 
 @app.route('/getArtist/<artist_id>')
 def getArtist(artist_id):

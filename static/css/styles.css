@@ -1,0 +1,85 @@
+/* styles.css */
+
+/* 基本样式 */
+body {
+    background-color: #f8f9fa; /* 背景色 */
+    font-family: 'Roboto', sans-serif; /* 字体 */
+    color: #333; /* 文字颜色 */
+    padding-bottom: 100px; /* 底部填充 */
+}
+
+.container {
+    padding-top: 20px; /* 上方填充 */
+    padding-bottom: 20px; /* 下方填充 */
+}
+
+/* 播放器样式 */
+#player {
+    position: fixed; /* 固定定位 */
+    bottom: 0; /* 底部对齐 */
+    width: 100%; /* 宽度占满 */
+    background-color: #f8f9fa; /* 背景色 */
+    padding: 10px; /* 内边距 */
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1); /* 阴影效果 */
+    display: flex; /* 弹性布局 */
+    align-items: center; /* 垂直对齐 */
+    justify-content: space-between; /* 水平对齐 */
+}
+
+#player img {
+    width: 50px; /* 宽度 */
+    height: 50px; /* 高度 */
+    margin-right: 10px; /* 右外边距 */
+    border-radius: 50%; /* 圆角 */
+    box-shadow: 0 0 5px rgba(0,0,0,0.1); /* 阴影效果 */
+}
+
+/* 艺术家列表样式 */
+.artistlist {
+    position: fixed; /* 固定定位 */
+    top: 100px; /* 距离页面顶部的距离 */
+    left: 20px; /* 距离页面左侧的距离 */
+    width: 20%; /* 设置宽度 */
+    height: 80vh; /* 设置高度为视口高度的80% */
+    overflow-y: auto; /* 启用垂直滚动 */
+    background-color: #fff; /* 背景色 */
+    padding: 10px; /* 内边距 */
+    border: 1px solid #ddd; /* 边框 */
+    box-shadow: 0 0 10px rgba(0,0,0,0.1); /* 阴影效果 */
+}
+
+.artistlist h3 {
+    margin-top: 0; /* 顶部外边距 */
+}
+
+/* 搜索栏样式 */
+.search-bar {
+    background-color: #f1f1f1; /* 背景色 */
+    padding: 15px; /* 内边距 */
+    border-radius: 5px; /* 圆角边框 */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* 阴影效果 */
+}
+
+.search-bar input {
+    margin-bottom: 10px; /* 下方外边距 */
+}
+
+.search-bar button {
+    width: 100%; /* 按钮宽度占满列宽 */
+}
+
+.thead-blue {
+    background-color: #007bff; /* Bootstrap的蓝色 */
+    color: white; /* 白色文字 */
+}
+
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .col-md-3, .col-md-9 {
+        width: 100%; /* 列宽度为100% */
+    }
+    .artistlist-div {
+        display: none; /* 隐藏元素 */
+    }
+}

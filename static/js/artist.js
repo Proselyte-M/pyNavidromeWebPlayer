@@ -22,6 +22,8 @@ function loadArtistDetails(artistId) {
             });
             albumsHtml += '</div>'; // 关闭 row
             $('#content').html(albumsHtml);
+            // 更新URL
+            history.pushState(null, '', '/artist/' + artistId);  // 这里可以根据需要自定义URL路径
         } else {
             $('#content').html('<p>' + $('<div>').text(data.message).html() + '</p>');
         }
@@ -38,6 +40,7 @@ function getIndexes() {
         if (data.status === 'ok') {
             var artistsHtml = ''; // 确保在这里定义 artistsHtml 变量
             //console.log(data.indexes.index);
+            artistsHtml +="<h3>同人社团列表</h3>"
             data.indexes.index.forEach(function (list) {
                 artistsHtml += '<div class="card mb-4 shadow-sm">';
                 artistsHtml += '<div class="card-body">';
