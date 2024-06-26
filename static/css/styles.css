@@ -54,11 +54,20 @@ body {
 
 /* 搜索栏样式 */
 .search-bar {
-    background-color: #f1f1f1; /* 背景色 */
-    padding: 15px; /* 内边距 */
-    border-radius: 5px; /* 圆角边框 */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* 阴影效果 */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000; /* 确保它在所有其他内容之上 */
+    background-color: white; /* 根据需要设置背景颜色 */
+    padding: 10px 0; /* 添加一些上下内边距 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 添加阴影以便更清晰地看到 */
 }
+
+.container-fluid {
+    padding-top: 80px; /* 确保内容不会被固定的搜索栏覆盖 */
+}
+
 
 .search-bar input {
     margin-bottom: 10px; /* 下方外边距 */
@@ -72,6 +81,20 @@ body {
     background-color: #007bff; /* Bootstrap的蓝色 */
     color: white; /* 白色文字 */
 }
+
+.popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    display: none; /* 初始时隐藏 */
+}
+
 
 
 /* 响应式设计 */

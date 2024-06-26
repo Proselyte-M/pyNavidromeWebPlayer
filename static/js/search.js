@@ -1,4 +1,74 @@
+$(document).ready(function () {
+    var searchTimer; // 声明一个变量用于存储定时器ID
+
+    var $searchAlbumInput = $('#search-album-input');
+    var $searchArtistInput = $('#search-artist-input');
+    var $searchSongInput = $('#search-song-input');
+    
+    // 搜索功能 - 专辑
+    $('#search-album-input').on('keyup', function () {
+        var query = $(this).val();
+        clearTimeout(searchTimer); // 清除之前的定时器
+
+        // 设置新的定时器，在用户输入停止一秒后执行搜索
+        searchTimer = setTimeout(function () {
+            if (query.length > 2) {
+                searchAlbums(query);
+            } else if (query.length === 0) {
+                loadAlbums(globalpage);
+            }
+            history.pushState(null, '', `/searchAlbums/${query}`);
+            $searchArtistInput.val('');
+            $searchSongInput.val('');
+        }, 1000); // 延时1秒（1000毫秒）
+    });
+
+    // 搜索功能 - 艺术家
+    $('#search-artist-input').on('keyup', function () {
+        var query = $(this).val();
+        clearTimeout(searchTimer); // 清除之前的定时器
+
+        // 设置新的定时器，在用户输入停止一秒后执行搜索
+        searchTimer = setTimeout(function () {
+            if (query.length > 2) {
+                searchArtists(query);
+            } else if (query.length === 0) {
+                loadAlbums(globalpage);
+            }
+            history.pushState(null, '', `/searchArtists/${query}`); 
+            $searchAlbumInput.val('');
+            $searchSongInput.val('');
+        }, 1000); // 延时1秒（1000毫秒）
+    });
+
+    // 搜索功能 - 歌曲
+    $('#search-song-input').on('keyup', function () {
+        var query = $(this).val();
+        clearTimeout(searchTimer); // 清除之前的定时器
+
+        // 设置新的定时器，在用户输入停止一秒后执行搜索
+        searchTimer = setTimeout(function () {
+            if (query.length > 2) {
+                searchSongs(query);
+            } else if (query.length === 0) {
+                loadAlbums(globalpage);
+            }
+            history.pushState(null, '', `/searchSongs/${query}`); 
+            $searchAlbumInput.val('');
+            $searchArtistInput.val('');
+        }, 1000); // 延时1秒（1000毫秒）
+    });
+});
+
+
+
+
+
+
 function searchAlbums(query) {
+    $('#up-button').prop('disabled', true);
+    $('#down-button').prop('disabled', true);
+    $('#content').html('<p>Searching...</p>');
     $.getJSON('/search', { query: query }, function (data) {
         console.log(data);
         if (data.status === 'ok') {
@@ -24,6 +94,9 @@ function searchAlbums(query) {
 }
 
 function searchArtists(query) {
+    $('#up-button').prop('disabled', true);
+    $('#down-button').prop('disabled', true);
+    $('#content').html('<p>Searching...</p>');
     $.getJSON('/search_artists', { query: query }, function (data) {
         console.log(data);
         if (data.status === 'ok') {
@@ -47,6 +120,9 @@ function searchArtists(query) {
 }
 
 function searchSongs(query) {
+    $('#up-button').prop('disabled', true);
+    $('#down-button').prop('disabled', true);
+    $('#content').html('<p>Searching...</p>');
     $.getJSON('/search_songs', { query: query }, function (data) {
         console.log(data);
         if (data.status === 'ok') {

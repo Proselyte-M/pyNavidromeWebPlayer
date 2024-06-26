@@ -1,21 +1,49 @@
-from flask import Flask, render_template, jsonify, request, send_from_directory, Response
+from flask import Flask, render_template, jsonify, request, send_from_directory, Response, abort
 import requests
 import hashlib
+import hmac
+import time
 import os
 import logging
+from datetime import datetime, timedelta
 
 app = Flask(__name__, static_url_path='/static')
 
+SECRET_KEY = 'ppp'
 SUBSONIC_API_URL = 'http://10.39.160.20:4533/rest'
 API_VERSION = '1.16.1'
 CLIENT_NAME = 'pywebplayer'
 USERNAME = os.getenv('SUBSONIC_USERNAME', 'test')  # 使用环境变量存储用户名
 PASSWORD = os.getenv('SUBSONIC_PASSWORD', 'test')  # 使用环境变量存储密码
+FLASKDEBUG = os.getenv('SUBSONIC_PASSWORD', 'False')
 
 CACHE_DIR = 'cover_cache'
 os.makedirs(CACHE_DIR, exist_ok=True)
 
 logging.basicConfig(level=logging.INFO)
+
+
+def generate_encrypted_param(song_id):
+    timestamp = int(time.time())
+    payload = f'{song_id}{timestamp}'
+    signature = hmac.new(SECRET_KEY.encode(), payload.encode(), hashlib.sha256).hexdigest()
+    return f'{timestamp}:{signature}'
+
+def verify_encrypted_param(song_id, encrypted_param):
+    try:
+        timestamp, signature = encrypted_param.split(':')
+        timestamp = int(timestamp)
+    except ValueError:
+        return False
+
+    current_time = int(time.time())
+    if current_time - timestamp > 1800:  # 30 minutes
+        return False
+
+    payload = f'{song_id}{timestamp}'
+    expected_signature = hmac.new(SECRET_KEY.encode(), payload.encode(), hashlib.sha256).hexdigest()
+    return hmac.compare_digest(expected_signature, signature)
+
 
 def generate_token(password):
     """生成Subsonic API的认证token."""
@@ -65,8 +93,10 @@ def cover(cover_art_id):
     token, salt = generate_token(PASSWORD)
     cover_path = cache_cover_art(cover_art_id, token, salt)
     if cover_path and os.path.exists(cover_path):
-        subdir = cover_art_id[:5]
-        return send_from_directory(os.path.join(CACHE_DIR, subdir), f'{cover_art_id}.webp')  # 返回 .webp 格式的图片
+        response = send_from_directory(os.path.join(CACHE_DIR, cover_art_id[:5]), f'{cover_art_id}.webp')
+        response.headers['Cache-Control'] = 'public, max-age=31536000'
+        response.headers['Expires'] = (datetime.utcnow() + timedelta(days=365)).strftime("%a, %d %b %Y %H:%M:%S GMT")
+        return response
     else:
         return jsonify({'status': 'error', 'message': 'Cover art not found'}), 404
     
@@ -141,6 +171,17 @@ def artist(artist_id):
 def albumlist(page):
     return render_template('index.html', page=page)
 
+@app.route('/searchAlbums/<query>')
+def searchAlbums(query):
+    return render_template('index.html', query=query)
+
+@app.route('/searchArtists/<query>')
+def searchArtists(query):
+    return render_template('index.html', query=query)
+
+@app.route('/searchSongs/<query>')
+def searchSongs(query):
+    return render_template('index.html', query=query)
 
 
 @app.route('/getArtist/<artist_id>')
@@ -194,6 +235,11 @@ def getIndexes():
 
 @app.route('/play/<song_id>')
 def play_song(song_id):
+    encrypted_param = request.args.get('token')
+    
+    if not encrypted_param or not verify_encrypted_param(song_id, encrypted_param):
+        abort(403)  # Forbidden
+
     token, salt = generate_token(PASSWORD)
     stream_url = f'{SUBSONIC_API_URL}/stream.view?u={USERNAME}&t={token}&s={salt}&v={API_VERSION}&c={CLIENT_NAME}&id={song_id}'
 
@@ -209,6 +255,12 @@ def play_song(song_id):
             yield b''
 
     return Response(generate(), content_type='audio/mp4')
+
+@app.route('/generate_token/<song_id>')
+def generate_token_endpoint(song_id):
+    token = generate_encrypted_param(song_id)
+    return jsonify({'token': token})
+
 
 @app.route('/search')
 def search():
@@ -292,4 +344,4 @@ def search_songs():
         return jsonify({'status': 'error', 'message': 'Failed to search songs'})
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True)
+    app.run(host='0.0.0.0')

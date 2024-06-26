@@ -1,21 +1,25 @@
 function loadArtistDetails(artistId) {
+    $('#up-button').prop('disabled', true);
+    $('#down-button').prop('disabled', true);
     console.log('Loading Artist Details...');
     $('#content').html('<p>Loading artist details...</p>'); // 显示加载中信息
     $.getJSON('/getArtist/' + artistId, function (data) {
         //console.log(data);
         if (data.status === 'ok') {
-            var albumsHtml = '<div class="row">';
+            var albumsHtml = ""
+            albumsHtml += `<div>`
+            albumsHtml += `<h5 class="card-title">${data.artist.name}</h5>`
+            albumsHtml += `</div>`
+            albumsHtml += '<div class="row">';
             data.artist.album.forEach(function (album) {
                 albumsHtml += '<div class="col-md-3">';
                 albumsHtml += '<div class="card mb-4 shadow-sm">';
                 
                 // 使用 .card-img-top 类确保图片正常显示
                 albumsHtml += `<img class="card-img-top square-img" src="/cover/${album.coverArt}" alt="Album Cover" onclick="loadAlbumDetails('${album.id}')">`;
-                
                 albumsHtml += '<div class="card-body">';
                 albumsHtml += `<h5 class="card-title">${$('<div>').text(album.name).html()}</h5>`;
-                albumsHtml += `<p class="card-text">${$('<div>').text(album.artist).html()}</p>`;
-                
+                albumsHtml += `<p class="card-text">${$('<div>').text(album.artist+"\t---\t"+album.year).html()}</p>`;
                 albumsHtml += '</div>'; // 关闭 card-body
                 albumsHtml += '</div>'; // 关闭 card
                 albumsHtml += '</div>'; // 关闭 col-md-3

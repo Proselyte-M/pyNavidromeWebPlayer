@@ -1,9 +1,15 @@
 function loadAlbums(page) {
+    $('#up-button').prop('disabled', false);
+    $('#down-button').prop('disabled', false);
     console.log('Loading albums...');
     $('#content').html('<p>Loading albums...</p>'); // 显示加载中信息
     $.getJSON(`/get_albums/${page}`, function (data) {
         if (data.status === 'ok') {
-            var albumsHtml = '<div class="row">';
+            var albumsHtml = ""
+            albumsHtml += `<div>`
+            albumsHtml += `<h5 class="card-title">最新音乐</h5>`
+            albumsHtml += `</div>`
+            albumsHtml += '<div class="row">';
             data.albums.forEach(function (album) {
                 albumsHtml += '<div class="col-md-3">';
                 albumsHtml += '<div class="card mb-4 shadow-sm">';
@@ -35,6 +41,8 @@ function loadAlbums(page) {
 
 
 function loadAlbumDetails(albumId) {
+    $('#up-button').prop('disabled', true);
+    $('#down-button').prop('disabled', true);
     console.log('Loading album details for album ID:', albumId);
     var url = '/get_album_details/' + albumId;
     $('#content').html('<p>Loading album details...</p>'); // 显示加载中信息
@@ -50,9 +58,11 @@ function loadAlbumDetails(albumId) {
             albumHtml += '</div>';
             albumHtml += '<div class="col-md-9">';
             albumHtml += '<ul class="list-group mb-3">';
-            albumHtml += `<li class="list-group-item"><strong>Album Name:</strong> ${album.name}</li>`;
-            albumHtml += `<li class="list-group-item"><strong>Album Artist:</strong> <span style="cursor: pointer; text-decoration: underline;" onclick="loadArtistDetails('${album.artistId}')">${album.artist}</span></li>`;
-            albumHtml += `<li class="list-group-item"><strong>Song Count:</strong> ${album.songCount}</li>`;
+            albumHtml += `<li class="list-group-item"><strong>专辑名称:</strong> ${album.name}</li>`;
+            albumHtml += `<li class="list-group-item"><strong>社团名称:</strong> <span href="/artist/${album.artistId}" style="cursor: pointer; text-decoration: underline;" onclick="loadArtistDetails('${"",album.artistId}')">${album.artist}</span></li>`;
+            albumHtml += `<li class="list-group-item"><strong>歌曲总数:</strong> ${album.songCount}</li>`;
+            albumHtml += `<li class="list-group-item"><strong>首发日期:</strong> ${album.year}</li>`;
+            albumHtml += `<li class="list-group-item"><strong>专辑总长:</strong> ${album.duration}秒</li>`;
             albumHtml += '</ul>';
             albumHtml += '</div>';
             albumHtml += '</div>'; // 结束row
