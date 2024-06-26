@@ -3,6 +3,8 @@ function loadArtistDetails(artistId) {
     $('#down-button').prop('disabled', true);
     console.log('Loading Artist Details...');
     $('#content').html('<p>Loading artist details...</p>'); // 显示加载中信息
+    // 更新URL
+    history.pushState(null, '', '/artist/' + artistId);  // 这里可以根据需要自定义URL路径
     $.getJSON('/getArtist/' + artistId, function (data) {
         //console.log(data);
         if (data.status === 'ok') {
@@ -26,8 +28,7 @@ function loadArtistDetails(artistId) {
             });
             albumsHtml += '</div>'; // 关闭 row
             $('#content').html(albumsHtml);
-            // 更新URL
-            history.pushState(null, '', '/artist/' + artistId);  // 这里可以根据需要自定义URL路径
+            
         } else {
             $('#content').html('<p>' + $('<div>').text(data.message).html() + '</p>');
         }

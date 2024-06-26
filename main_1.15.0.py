@@ -11,7 +11,7 @@ app = Flask(__name__, static_url_path='/static')
 
 SECRET_KEY = 'ppp'
 SUBSONIC_API_URL = 'http://10.39.160.20:4533/rest'
-API_VERSION = '1.16.1'
+API_VERSION = '1.15.0'
 CLIENT_NAME = 'pywebplayer'
 USERNAME = os.getenv('SUBSONIC_USERNAME', 'test')  # 使用环境变量存储用户名
 PASSWORD = os.getenv('SUBSONIC_PASSWORD', 'test')  # 使用环境变量存储密码
@@ -67,8 +67,7 @@ def cache_cover_art(cover_art_id, token, salt,size,filetype):
         try:
             response = requests.get(f'{SUBSONIC_API_URL}/getCoverArt.view', params={
                 'u': USERNAME,
-                't': token,
-                's': salt,
+                'p': PASSWORD,
                 'v': API_VERSION,
                 'c': CLIENT_NAME,
                 'id': cover_art_id,
@@ -135,8 +134,7 @@ def get_albums(page):
     try:
         response = requests.get(f'{SUBSONIC_API_URL}/getAlbumList.view', params={
             'u': USERNAME,
-            't': token,
-            's': salt,
+            'p': PASSWORD,
             'v': API_VERSION,
             'c': CLIENT_NAME,
             'f': 'json',
@@ -163,13 +161,14 @@ def get_album_details(album_id):
     try:
         response = requests.get(f'{SUBSONIC_API_URL}/getAlbum.view', params={
             'u': USERNAME,
-            't': token,
-            's': salt,
+            'p': PASSWORD,
             'v': API_VERSION,
             'c': CLIENT_NAME,
             'f': 'json',
             'id': album_id
         })
+        print(response.text)
+        print(response.url)
         response.raise_for_status()
         if response.json()['subsonic-response']['status'] == 'ok':
             album = response.json()['subsonic-response'].get('album', {})
@@ -213,8 +212,7 @@ def getArtist(artist_id):
     try:
         response = requests.get(f'{SUBSONIC_API_URL}/getArtist.view', params={
             'u': USERNAME,
-            't': token,
-            's': salt,
+            'p': PASSWORD,
             'v': API_VERSION,
             'c': CLIENT_NAME,
             'f': 'json',
@@ -238,8 +236,7 @@ def getIndexes():
     try:
         response = requests.get(f'{SUBSONIC_API_URL}/getIndexes.view', params={
             'u': USERNAME,
-            't': token,
-            's': salt,
+            'p': PASSWORD,
             'v': API_VERSION,
             'c': CLIENT_NAME,
             'f': 'json'
@@ -292,8 +289,7 @@ def search():
     try:
         response = requests.get(f'{SUBSONIC_API_URL}/search2.view', params={
             'u': USERNAME,
-            't': token,
-            's': salt,
+            'p': PASSWORD,
             'v': API_VERSION,
             'c': CLIENT_NAME,
             'f': 'json',
@@ -319,8 +315,7 @@ def search_artists():
     try:
         response = requests.get(f'{SUBSONIC_API_URL}/search2.view', params={
             'u': USERNAME,
-            't': token,
-            's': salt,
+            'p': PASSWORD,
             'v': API_VERSION,
             'c': CLIENT_NAME,
             'f': 'json',
@@ -346,8 +341,7 @@ def search_songs():
     try:
         response = requests.get(f'{SUBSONIC_API_URL}/search2.view', params={
             'u': USERNAME,
-            't': token,
-            's': salt,
+            'p': PASSWORD,
             'v': API_VERSION,
             'c': CLIENT_NAME,
             'f': 'json',
@@ -366,4 +360,4 @@ def search_songs():
         return jsonify({'status': 'error', 'message': 'Failed to search songs'})
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0',debug=True)

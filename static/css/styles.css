@@ -37,7 +37,7 @@ body {
 /* 艺术家列表样式 */
 .artistlist {
     position: fixed; /* 固定定位 */
-    top: 100px; /* 距离页面顶部的距离 */
+    top: 80px; /* 距离页面顶部的距离 */
     left: 20px; /* 距离页面左侧的距离 */
     width: 20%; /* 设置宽度 */
     height: 80vh; /* 设置高度为视口高度的80% */

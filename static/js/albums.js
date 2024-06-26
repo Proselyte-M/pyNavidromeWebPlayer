@@ -3,11 +3,13 @@ function loadAlbums(page) {
     $('#down-button').prop('disabled', false);
     console.log('Loading albums...');
     $('#content').html('<p>Loading albums...</p>'); // 显示加载中信息
+    history.pushState(null, '', `/albumlist/${page}`);  // 这里可以根据需要自定义URL路径
     $.getJSON(`/get_albums/${page}`, function (data) {
+        console.log(data);
         if (data.status === 'ok') {
             var albumsHtml = ""
             albumsHtml += `<div>`
-            albumsHtml += `<h5 class="card-title">最新音乐</h5>`
+            albumsHtml += `<h5 class="card-title">最新音乐-第${page}页</h5>`
             albumsHtml += `</div>`
             albumsHtml += '<div class="row">';
             data.albums.forEach(function (album) {
@@ -15,11 +17,11 @@ function loadAlbums(page) {
                 albumsHtml += '<div class="card mb-4 shadow-sm">';
                 
                 // 使用 .card-img-top 类来确保图片正常显示
-                albumsHtml += `<img class="card-img-top square-img" src="/cover/${album.coverArt}" alt="Album Cover" onclick="loadAlbumDetails('${album.id}')">`;
+                albumsHtml += `<img class="card-img-top square-img" src="/cover/${album.coverArt}" alt="${album.album} Album Cover - TouHou Music" onclick="loadAlbumDetails('${album.id}')">`;
                 
                 albumsHtml += '<div class="card-body">';
-                albumsHtml += `<h5 class="card-title">${album.name}</h5>`;
-                albumsHtml += `<p class="card-text">${album.artist}</p>`;
+                albumsHtml += `<h5 class="card-title">${album.album}</h5>`;
+                albumsHtml += `<p class="card-text">${album.artist} - ${album.year}</p>`;
                 albumsHtml += '</div>'; // 关闭 card-body
                 
                 albumsHtml += '</div>'; // 关闭 card
@@ -27,7 +29,7 @@ function loadAlbums(page) {
             });
             albumsHtml += '</div>'; // 关闭 row
             $('#content').html(albumsHtml);
-            history.pushState(null, '', `/albumlist/${page}`);  // 这里可以根据需要自定义URL路径
+
 
         } else {
             $('#content').html('<p>' + data.message + '</p>');
@@ -46,6 +48,7 @@ function loadAlbumDetails(albumId) {
     console.log('Loading album details for album ID:', albumId);
     var url = '/get_album_details/' + albumId;
     $('#content').html('<p>Loading album details...</p>'); // 显示加载中信息
+    history.pushState(null, '', '/albums/' + albumId); // 这里可以根据需要自定义URL路径
     $.getJSON(url, function (data) {
         console.log(data);
         if (data.status === 'ok') {
@@ -53,16 +56,19 @@ function loadAlbumDetails(albumId) {
             var albumHtml = '<div class="row">';
             albumHtml += '<div class="col-md-3">';
             albumHtml += '<div class="card">';
-            albumHtml += `<img src="/cover/${album.coverArt}" class="card-img-top" alt="Cover Art">`;
+            //albumHtml += `<img src="/cover/${album.coverArt}" class="card-img-top" alt="${album.name} Album Cover - TouHou Music">`;
+            albumHtml += `<a href="/cover/o/${album.name}/${album.coverArt}" target="_blank">`;
+            albumHtml += `<img src="/cover/${album.coverArt}" class="card-img-top" alt="${album.name} Album Cover - TouHou Music">`;
+            albumHtml += `</a>`;
             albumHtml += '</div>';
             albumHtml += '</div>';
             albumHtml += '<div class="col-md-9">';
             albumHtml += '<ul class="list-group mb-3">';
-            albumHtml += `<li class="list-group-item"><strong>专辑名称:</strong> ${album.name}</li>`;
+            albumHtml += `<li class="list-group-item"><strong>专辑名称:</strong> <a href="/albums/${albumId}" target="_blank">${album.name}</a></li>`;
             albumHtml += `<li class="list-group-item"><strong>社团名称:</strong> <span href="/artist/${album.artistId}" style="cursor: pointer; text-decoration: underline;" onclick="loadArtistDetails('${"",album.artistId}')">${album.artist}</span></li>`;
             albumHtml += `<li class="list-group-item"><strong>歌曲总数:</strong> ${album.songCount}</li>`;
             albumHtml += `<li class="list-group-item"><strong>首发日期:</strong> ${album.year}</li>`;
-            albumHtml += `<li class="list-group-item"><strong>专辑总长:</strong> ${album.duration}秒</li>`;
+            albumHtml += `<li class="list-group-item"><strong>专辑总长:</strong> ${formatTime(album.duration)}</li>`;
             albumHtml += '</ul>';
             albumHtml += '</div>';
             albumHtml += '</div>'; // 结束row
@@ -86,7 +92,7 @@ function loadAlbumDetails(albumId) {
             albumHtml += '</table>';
             $('#content').html(albumHtml);
             // 更新URL
-            history.pushState(null, '', '/albums/' + albumId); // 这里可以根据需要自定义URL路径
+            
         } else {
             $('#content').html('<p>' + data.message + '</p>');
         }
@@ -98,15 +104,14 @@ function loadAlbumDetails(albumId) {
 
 
 
-function playSong(songId, songTitle, coverArt) {
-    console.log(`Playing song ID: ${songId}, Title: ${songTitle}`);
-    var url = `/play/${songId}`;
-    var audioElement = $('#audioPlayer');
-    if (audioElement.length === 0) {
-        audioElement = $('<audio id="audioPlayer" controls></audio>');
-        $('#content').append(audioElement);
-    }
-    audioElement.attr('src', url);
-    audioElement[0].play();
+function formatTime(seconds) {
+    let minutes = Math.floor(seconds / 60);
+    let remainingSeconds = seconds % 60;
+    
+    // 使用 padStart 函数来确保秒数和分钟数为两位数
+    let formattedTime = `${minutes.toString().padStart(2, '0')}分${remainingSeconds.toString().padStart(2, '0')}秒`;
+    
+    return formattedTime;
 }
+
 

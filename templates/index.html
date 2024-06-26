@@ -3,10 +3,12 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="description" content="Explore a vast collection of TouHou music albums, discover artists, and listen to your favorite songs.">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TouHou Music</title>
+    <title>TouHou Music - Discover Albums, Artists, and Songs</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" crossorigin="anonymous">
     <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
 </head>
 
 <body>
@@ -79,6 +81,11 @@
     <script src="{{ url_for('static', filename='js/playback.js') }}"></script>
     <script src="{{ url_for('static', filename='js/artist.js') }}"></script>
     <script>
+        // 监听 popstate 事件，在历史记录状态改变时触发
+        window.addEventListener('popstate', function (event) {
+            // 根据新的历史记录状态更新页面内容
+            loadPageFromHistory(event.state);
+        });
         var globalpage = 0;
         $(document).ready(function () {
             // 页面加载时保持播放器区域隐藏

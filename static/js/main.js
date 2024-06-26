@@ -91,7 +91,7 @@ function downPage() {
     emoji.textContent = '😊'; // 笑脸emoji
 
     var text = document.createElement('p');
-    text.innerHTML = '东方音乐播放站，版权没有<br>有事请联系：admin@thmusic.top'; // 文本内容，使用innerHTML来支持换行
+    text.innerHTML = '东方音乐播放站，版权没有<br>有事请联系：admin@thmusic.top<br>如果需要大幅度翻页请直接修改网址里的页面数目<br>就是网址最后的数字。<br>截至目前（2024年6月26日）总共721页。'; // 文本内容，使用innerHTML来支持换行
 
     // 将内容添加到浮动窗口
     popup.appendChild(emoji);
