@@ -57,7 +57,6 @@ def cache_cover_art(cover_art_id, token, salt,size,filetype):
     subdir = cover_art_id[:5]
     cover_dir = os.path.join(CACHE_DIR,size, subdir)
     cover_path = os.path.join(cover_dir, f'{cover_art_id+"."+filetype}')  # 修改文件后缀为 .webp
-    print(cover_path)
 
     # 检查缓存目录是否存在，不存在则创建
     if not os.path.exists(cover_dir):
@@ -86,7 +85,6 @@ def cache_cover_art(cover_art_id, token, salt,size,filetype):
         except requests.RequestException as e:
             logging.error(f"获取封面图片失败: {e}")
             return None
-    print(cover_path)
     return cover_path
 
 @app.route('/cover/<cover_art_id>')
@@ -128,9 +126,10 @@ def index():
 
 @app.route('/get_albums/<page>')
 def get_albums(page):
+    size = 18
     token, salt = generate_token(PASSWORD)
     number = int(page)
-    result = number * 20
+    result = number * size
     page = str(result)
     try:
         response = requests.get(f'{SUBSONIC_API_URL}/getAlbumList.view', params={
@@ -141,7 +140,7 @@ def get_albums(page):
             'c': CLIENT_NAME,
             'f': 'json',
             'type': 'newest',
-            'size': '20',
+            'size': size,
             'offset': page
         })
         response.raise_for_status()
@@ -366,4 +365,4 @@ def search_songs():
         return jsonify({'status': 'error', 'message': 'Failed to search songs'})
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0',debug=True)

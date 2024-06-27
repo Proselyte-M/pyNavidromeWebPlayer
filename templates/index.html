@@ -3,7 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="description" content="Explore a vast collection of TouHou music albums, discover artists, and listen to your favorite songs.">
+    <meta name="description"
+        content="Explore a vast collection of TouHou music albums, discover artists, and listen to your favorite songs.">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TouHou Music - Discover Albums, Artists, and Songs</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" crossorigin="anonymous">
@@ -27,10 +28,11 @@
             <div class="col-md-3 col-12">
                 <div class="row">
                     <div class="col-3">
-                        <button  id="up-button" class="btn btn-primary btn-block" onclick="upPage('0')">←</button>
+                        <button id="up-button" class="btn btn-primary btn-block" onclick="upPage('0')">←</button>
                     </div>
                     <div class="col-3">
-                        <button id="home-button" class="btn btn-primary btn-block" onclick="loadAlbums(globalpage)">🏠</button>
+                        <button id="home-button" class="btn btn-primary btn-block"
+                            onclick="loadAlbums(globalpage)">🏠</button>
                     </div>
                     <div class="col-3">
                         <button id="down-button" class="btn btn-primary btn-block" onclick="downPage('0')">→</button>
@@ -41,15 +43,9 @@
                 </div>
             </div>
         </div>
-        
 
-        <div class="row">
-            <div class="col-md-3 col-12 artistlist-div">
-                <div class="artistlist">
-                    <h3>同人社团列表</h3>
-                    <!-- 艺术家列表内容会被动态加载到这里 -->
-                </div>
-            </div>
+
+        <div class="row mianpage">
             <div class="col-md-9 col-12">
                 <!-- 主体内容 -->
 
@@ -57,18 +53,31 @@
                     <!-- 内容通过AJAX加载 -->
                 </div>
             </div>
+            <div class="col-md-3 col-12 artistlist-div">
+                <div class="artistlist">
+                    <h3>同人社团列表</h3>
+                    <!-- 艺术家列表内容会被动态加载到这里 -->
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- 播放器区域 -->
-    <div id="player" class="d-none">
-        <audio id="audio-player" controls></audio>
-        <div id="current-song-title"></div>
-        <img id="current-album-cover" src="https://via.placeholder.com/50" alt="Album Cover">
+    <div id="player" class="player-hidden">
+        <audio id="audio-player"></audio>
+        <div id="current-song-info">
+            <img id="current-album-cover" src="/cover/al-52afa4f18fb2f47645dd93a5ccfde18a_6673e5e7" alt="Album Cover">
+            <div id="current-song-title">Song Title</div>
+            <div id="controls">
+                <button id="play-pause">⏸️</button>
+                <input type="range" id="volume-control" min="0" max="1" step="0.01" value="1">
+            </div>
+        </div>
         <div id="progress-container">
             <input type="range" id="progress-bar" value="0" max="100">
         </div>
     </div>
+    
 
     <!-- 引入jQuery和Bootstrap的单独文件 -->
     <script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
@@ -80,28 +89,6 @@
     <script src="{{ url_for('static', filename='js/search.js') }}"></script>
     <script src="{{ url_for('static', filename='js/playback.js') }}"></script>
     <script src="{{ url_for('static', filename='js/artist.js') }}"></script>
-    <script>
-        // 监听 popstate 事件，在历史记录状态改变时触发
-        window.addEventListener('popstate', function (event) {
-            // 根据新的历史记录状态更新页面内容
-            loadPageFromHistory(event.state);
-        });
-        var globalpage = 0;
-        $(document).ready(function () {
-            // 页面加载时保持播放器区域隐藏
-            $('#player').hide();
-            // 页面初始化时的处理
-            $(document).ready(function () {
-                // 加载页面时检查当前URL路径
-                checkUrlPage();
-
-                // 监听 popstate 事件，以便在用户点击浏览器的前进或后退按钮时检查URL路径
-                window.addEventListener('popstate', function (event) {
-                    checkUrlPage(urlpage);
-                });
-            });
-        });
-    </script>
 </body>
 
 </html>

@@ -2,54 +2,167 @@
 
 /* 基本样式 */
 body {
-    background-color: #f8f9fa; /* 背景色 */
-    font-family: 'Roboto', sans-serif; /* 字体 */
-    color: #333; /* 文字颜色 */
-    padding-bottom: 100px; /* 底部填充 */
+    background-color: #f8f9fa;
+    /* 背景色 */
+    font-family: 'Roboto', sans-serif;
+    /* 字体 */
+    color: #333;
+    /* 文字颜色 */
+    padding-bottom: 100px;
+    /* 底部填充 */
+    overflow: hidden; /* 隐藏溢出内容 */
 }
 
 .container {
-    padding-top: 20px; /* 上方填充 */
-    padding-bottom: 20px; /* 下方填充 */
+    padding-top: 20px;
+    /* 上方填充 */
+    padding-bottom: 20px;
+    /* 下方填充 */
 }
 
 /* 播放器样式 */
 #player {
-    position: fixed; /* 固定定位 */
-    bottom: 0; /* 底部对齐 */
-    width: 100%; /* 宽度占满 */
-    background-color: #f8f9fa; /* 背景色 */
-    padding: 10px; /* 内边距 */
-    box-shadow: 0 -2px 10px rgba(0,0,0,0.1); /* 阴影效果 */
-    display: flex; /* 弹性布局 */
-    align-items: center; /* 垂直对齐 */
-    justify-content: space-between; /* 水平对齐 */
+    position: fixed;
+    /* 固定定位 */
+    bottom: 0;
+    /* 底部对齐 */
+    width: 100%;
+    /* 宽度占满 */
+    background-color: #f8f9fa;
+    /* 背景色 */
+    padding: 10px;
+    /* 内边距 */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    display: flex;
+    /* 弹性布局 */
+    align-items: center;
+    /* 垂直对齐 */
+    justify-content: space-between;
+    /* 水平对齐 */
+    z-index: 20;
+    /* 确保在其他内容之上 */
 }
 
-#player img {
-    width: 50px; /* 宽度 */
-    height: 50px; /* 高度 */
-    margin-right: 10px; /* 右外边距 */
-    border-radius: 50%; /* 圆角 */
-    box-shadow: 0 0 5px rgba(0,0,0,0.1); /* 阴影效果 */
+#player.player-hidden {
+    display: none;
 }
 
-/* 艺术家列表样式 */
-.artistlist {
-    position: fixed; /* 固定定位 */
-    top: 80px; /* 距离页面顶部的距离 */
-    left: 20px; /* 距离页面左侧的距离 */
-    width: 20%; /* 设置宽度 */
-    height: 80vh; /* 设置高度为视口高度的80% */
-    overflow-y: auto; /* 启用垂直滚动 */
-    background-color: #fff; /* 背景色 */
-    padding: 10px; /* 内边距 */
-    border: 1px solid #ddd; /* 边框 */
-    box-shadow: 0 0 10px rgba(0,0,0,0.1); /* 阴影效果 */
+#audio-player {
+    display: none;
 }
 
-.artistlist h3 {
-    margin-top: 0; /* 顶部外边距 */
+#current-song-info {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+}
+
+#current-song-title {
+    margin-left: 10px;
+    font-size: 1.2em;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-grow: 1;
+}
+
+#current-album-cover {
+    width: 50px;
+    height: 50px;
+    border-radius: 5px;
+}
+
+#progress-container {
+    flex-grow: 1;
+    margin-left: 20px;
+}
+
+#progress-bar {
+    width: 100%;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    height: 8px;
+    border-radius: 5px;
+    background: #444;
+    outline: none;
+    opacity: 0.7;
+    transition: opacity .2s;
+}
+
+#progress-bar:hover {
+    opacity: 1;
+}
+
+#progress-bar::-webkit-slider-thumb {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #007bff;
+    cursor: pointer;
+}
+
+#progress-bar::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #007bff;
+    cursor: pointer;
+}
+
+#controls {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+}
+
+#play-pause {
+    margin-right: 10px;
+    background-color: #007bff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+}
+
+#volume-control {
+    width: 100px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    height: 8px;
+    border-radius: 5px;
+    background: #444;
+    outline: none;
+    opacity: 0.7;
+    transition: opacity .2s;
+}
+
+#volume-control:hover {
+    opacity: 1;
+}
+
+#volume-control::-webkit-slider-thumb {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #007bff;
+    cursor: pointer;
+}
+
+#volume-control::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #007bff;
+    cursor: pointer;
 }
 
 /* 搜索栏样式 */
@@ -58,28 +171,35 @@ body {
     top: 0;
     left: 0;
     width: 100%;
-    z-index: 1000; /* 确保它在所有其他内容之上 */
-    background-color: white; /* 根据需要设置背景颜色 */
-    padding: 10px 0; /* 添加一些上下内边距 */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 添加阴影以便更清晰地看到 */
+    z-index: 1000;
+    background-color: white;
+    padding: 15px 0; /* 调整上下内边距，增加整体高度 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    height: 70px; /* 设置整体高度 */
 }
 
+
 .container-fluid {
-    padding-top: 80px; /* 确保内容不会被固定的搜索栏覆盖 */
+    padding-top: 80px;
+    /* 确保内容不会被固定的搜索栏覆盖 */
 }
 
 
 .search-bar input {
-    margin-bottom: 10px; /* 下方外边距 */
+    margin-bottom: 10px;
+    /* 下方外边距 */
 }
 
 .search-bar button {
-    width: 100%; /* 按钮宽度占满列宽 */
+    width: 100%;
+    /* 按钮宽度占满列宽 */
 }
 
 .thead-blue {
-    background-color: #007bff; /* Bootstrap的蓝色 */
-    color: white; /* 白色文字 */
+    background-color: #007bff;
+    /* Bootstrap的蓝色 */
+    color: white;
+    /* 白色文字 */
 }
 
 .popup {
@@ -92,17 +212,116 @@ body {
     padding: 20px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     z-index: 1000;
-    display: none; /* 初始时隐藏 */
+    display: none;
+    /* 初始时隐藏 */
 }
 
 
 
 /* 响应式设计 */
 @media (max-width: 768px) {
-    .col-md-3, .col-md-9 {
-        width: 100%; /* 列宽度为100% */
+
+    .col-md-3,
+    .col-md-9 {
+        width: 100%;
+        /* 列宽度为100% */
     }
+
     .artistlist-div {
-        display: none; /* 隐藏元素 */
+        display: none;
+        /* 隐藏元素 */
     }
+    #content {
+        margin-top: 130px;
+        /* 根据需要调整距离 */
+    }
+   
+}
+
+
+.mianpage {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    /* 设置每个块之间的间距 */
+}
+
+.col-md-3 {
+    flex: 1 0 21%;
+    /* 根据需要调整此比例 */
+    margin-bottom: 20px;
+    /* 设置底部间距 */
+}
+
+/*专辑列表*/
+.card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.square-img-container {
+    position: relative;
+    overflow: hidden;
+    padding-top: 100%;
+    /* 1:1 aspect ratio (square) */
+}
+
+.square-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* 保持图片比例并填充容器 */
+}
+
+.card-body {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.card-title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 0;
+    /* 去除标题底部的默认间距 */
+}
+
+.card-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 0;
+    /* 去除文本底部的默认间距 */
+}
+
+
+
+
+
+/*艺术家列表*/
+.artistlist-div {
+    position: fixed;
+    bottom: 80px;
+    right: 0;
+    width: 500px;
+    height: calc(100vh - 180px);
+    overflow-y: auto;
+    padding: 20px;
+    box-sizing: border-box;
+    background-color: rgba(255, 255, 255, 0.95); /* 调整背景色透明度 */
+    border-radius: 10px; /* 圆角边框 */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* 添加阴影 */
+    transition: box-shadow 0.3s ease-in-out; /* 添加过渡效果 */
+
+    z-index: 10;
+}
+
+.artistlist-div:hover {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* 悬停时增加阴影效果 */
 }

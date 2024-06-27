@@ -6,31 +6,29 @@ function loadAlbums(page) {
     history.pushState(null, '', `/albumlist/${page}`);  // 这里可以根据需要自定义URL路径
     $.getJSON(`/get_albums/${page}`, function (data) {
         console.log(data);
-        if (data.status === 'ok') {
-            var albumsHtml = ""
-            albumsHtml += `<div>`
-            albumsHtml += `<h5 class="card-title">最新音乐-第${page}页</h5>`
-            albumsHtml += `</div>`
+        if (data.status === 'ok') { 
+            var albumsHtml = "";
+            albumsHtml += `<div>`;
+            albumsHtml += `<h5 class="card-title">最新音乐-第${page}页</h5>`;
+            albumsHtml += `</div>`;
             albumsHtml += '<div class="row">';
             data.albums.forEach(function (album) {
-                albumsHtml += '<div class="col-md-3">';
-                albumsHtml += '<div class="card mb-4 shadow-sm">';
+                albumsHtml += '<div class="col-md-2 mb-4">'; // 调整为col-md-2
+                albumsHtml += '<div class="card shadow-sm">';
+                albumsHtml += `<div class="square-img-container">`;
                 
                 // 使用 .card-img-top 类来确保图片正常显示
                 albumsHtml += `<img class="card-img-top square-img" src="/cover/${album.coverArt}" alt="${album.album} Album Cover - TouHou Music" onclick="loadAlbumDetails('${album.id}')">`;
-                
+                albumsHtml += `</div>`;
                 albumsHtml += '<div class="card-body">';
                 albumsHtml += `<h5 class="card-title">${album.album}</h5>`;
                 albumsHtml += `<p class="card-text">${album.artist} - ${album.year}</p>`;
                 albumsHtml += '</div>'; // 关闭 card-body
-                
                 albumsHtml += '</div>'; // 关闭 card
-                albumsHtml += '</div>'; // 关闭 col-md-3
+                albumsHtml += '</div>'; // 关闭 col-md-2
             });
             albumsHtml += '</div>'; // 关闭 row
             $('#content').html(albumsHtml);
-
-
         } else {
             $('#content').html('<p>' + data.message + '</p>');
         }
@@ -39,6 +37,7 @@ function loadAlbums(page) {
         $('#content').html('<p>Failed to load albums. Please try again later.</p>');
     });
 }
+
 
 
 

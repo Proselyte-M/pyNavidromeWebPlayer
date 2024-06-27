@@ -1,3 +1,21 @@
+// 监听 popstate 事件，在历史记录状态改变时触发
+window.addEventListener('popstate', function (event) {
+    checkUrlPage();
+});
+var globalpage = 0;
+$(document).ready(function () {
+    // 页面加载时保持播放器区域隐藏
+    $('#player').hide();
+    // 页面初始化时的处理
+
+    checkUrlPage();
+
+    // 监听 popstate 事件，以便在用户点击浏览器的前进或后退按钮时检查URL路径
+    window.addEventListener('popstate', function (event) {
+        checkUrlPage(urlpage);
+
+    });
+});
 
 
 // 检查当前URL是否为 /albums/<album_id>，如果是则执行相应的方法

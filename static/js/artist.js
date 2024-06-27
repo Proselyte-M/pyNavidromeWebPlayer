@@ -14,11 +14,12 @@ function loadArtistDetails(artistId) {
             albumsHtml += `</div>`
             albumsHtml += '<div class="row">';
             data.artist.album.forEach(function (album) {
-                albumsHtml += '<div class="col-md-3">';
+                albumsHtml += '<div class="col-md-2 mb-4">';
                 albumsHtml += '<div class="card mb-4 shadow-sm">';
-                
+                albumsHtml += `<div class="square-img-container">`;
                 // 使用 .card-img-top 类确保图片正常显示
                 albumsHtml += `<img class="card-img-top square-img" src="/cover/${album.coverArt}" alt="Album Cover" onclick="loadAlbumDetails('${album.id}')">`;
+                albumsHtml += `</div>`;
                 albumsHtml += '<div class="card-body">';
                 albumsHtml += `<h5 class="card-title">${$('<div>').text(album.name).html()}</h5>`;
                 albumsHtml += `<p class="card-text">${$('<div>').text(album.artist+"\t---\t"+album.year).html()}</p>`;

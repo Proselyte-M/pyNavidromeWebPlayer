@@ -72,3 +72,48 @@ function showPlayer() {
     $('#player').fadeIn(); // 使用jQuery淡入效果显示播放器区域
 }
 
+document.addEventListener('DOMContentLoaded', function () {
+    const audioPlayer = document.getElementById('audio-player');
+    const playPauseButton = document.getElementById('play-pause');
+    const volumeControl = document.getElementById('volume-control');
+    const progressBar = document.getElementById('progress-bar');
+
+    document.addEventListener('keydown', function(event) {
+        if (event.code === 'Space') {
+            event.preventDefault(); // 防止页面滚动
+            togglePlayPause();
+        }
+    });
+    function togglePlayPause() {
+        if (audioPlayer.paused) {
+            audioPlayer.play();
+            playPauseButton.textContent = '⏸️'; // 更改按钮显示为暂停图标
+        } else {
+            audioPlayer.pause();
+            playPauseButton.textContent = '▶️'; // 更改按钮显示为播放图标
+        }
+    }
+    playPauseButton.addEventListener('click', function () {
+        if (audioPlayer.paused) {
+            audioPlayer.play();
+            playPauseButton.textContent = '⏸️';
+        } else {
+            audioPlayer.pause();
+            playPauseButton.textContent = '▶️';
+        }
+    });
+
+    volumeControl.addEventListener('input', function () {
+        audioPlayer.volume = volumeControl.value;
+    });
+
+    audioPlayer.addEventListener('timeupdate', function () {
+        const progress = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+        progressBar.value = progress;
+    });
+
+    progressBar.addEventListener('input', function () {
+        const newTime = (progressBar.value / 100) * audioPlayer.duration;
+        audioPlayer.currentTime = newTime;
+    });
+});
