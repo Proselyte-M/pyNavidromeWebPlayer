@@ -12,7 +12,7 @@ $(document).ready(function () {
 
     // 监听 popstate 事件，以便在用户点击浏览器的前进或后退按钮时检查URL路径
     window.addEventListener('popstate', function (event) {
-        checkUrlPage(urlpage);
+        checkUrlPage();
 
     });
 });

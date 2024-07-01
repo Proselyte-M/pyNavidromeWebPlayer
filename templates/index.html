@@ -62,26 +62,66 @@
         </div>
     </div>
 
-    <!-- 播放器区域 -->
-    <div id="player" class="player-hidden">
-        <audio id="audio-player"></audio>
-        <div id="current-song-info">
-            <img id="current-album-cover" src="/cover/al-52afa4f18fb2f47645dd93a5ccfde18a_6673e5e7" alt="Album Cover">
-            <div id="current-song-title">Song Title</div>
-            <div id="controls">
-                <button id="play-pause">⏸️</button>
-                <input type="range" id="volume-control" min="0" max="1" step="0.01" value="1">
-            </div>
-        </div>
-        <div id="progress-container">
-            <input type="range" id="progress-bar" value="0" max="100">
+<!-- 播放器区域 -->
+ <!--
+<div id="player" class="player-hidden">
+    <audio id="audio-player"></audio>
+    
+    <div id="current-song-info">
+        <img id="current-album-cover" src="/cover/al-52afa4f18fb2f47645dd93a5ccfde18a_6673e5e7" alt="Album Cover">
+        <div id="current-song-title">Song Title</div>
+        <div id="controls">
+            <button id="play-pause">⏸️</button>
+            <input type="range" id="volume-control" min="0" max="1" step="0.01" value="1">
         </div>
     </div>
+    <div id="progress-container">
+        <div id="progress-bar-wrapper">
+            <div id="progress-bar"></div>
+        </div>
+    </div>
+</div>
+-->
+
+<div id="player">
+    <!-- cPlayer will render its UI here -->
+</div>
+
+<div id="loading-spinner" style="display: none;">
+    <!-- Loading spinner HTML -->
+</div>
+
+<div id="error-modal" style="display: none;">
+    <!-- Error modal HTML -->
+    <div id="error-message"></div>
+</div>
+
+
+
+
+<!-- 错误模态框 -->
+<div id="error-modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Error</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="error-message"></p>
+            </div>
+        </div>
+    </div>
+</div>
+
     
 
     <!-- 引入jQuery和Bootstrap的单独文件 -->
     <script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
     <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/cplayer/dist/cplayer.min.js"></script>
 
     <!-- 引入拆分后的JavaScript文件 -->
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
@@ -89,6 +129,11 @@
     <script src="{{ url_for('static', filename='js/search.js') }}"></script>
     <script src="{{ url_for('static', filename='js/playback.js') }}"></script>
     <script src="{{ url_for('static', filename='js/artist.js') }}"></script>
+    <script>
+        let player = new cplayer({
+          element: document.getElementById('player'),
+        })
+      </script>
 </body>
 
 </html>

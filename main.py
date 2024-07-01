@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify, request, send_from_directory, Response, abort, make_response
+from flask import Flask, render_template, jsonify, request, send_from_directory, Response, abort, make_response,send_file
 import requests
 import hashlib
 import hmac
@@ -37,7 +37,7 @@ def verify_encrypted_param(song_id, encrypted_param):
         return False
 
     current_time = int(time.time())
-    if current_time - timestamp > 1800:  # 30 minutes
+    if current_time - timestamp > 21600:  # 6h minutes
         return False
 
     payload = f'{song_id}{timestamp}'
