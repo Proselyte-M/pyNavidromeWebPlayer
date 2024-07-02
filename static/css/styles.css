@@ -164,20 +164,13 @@ body {
     background-color: #616bf5; /* 占位框的颜色 */
 }
 
-.card-body {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    background-color: rgba(255, 255, 255, 0.5); /* 调整背景色透明度 */
-}
 
 .card-title {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     margin-bottom: 0;
-    /* 去除标题底部的默认间距 */
+    font-size: 16px;
 }
 
 .card-text {
@@ -185,7 +178,7 @@ body {
     overflow: hidden;
     text-overflow: ellipsis;
     margin-bottom: 0;
-    /* 去除文本底部的默认间距 */
+    font-size: 14px;
 }
 
 
@@ -197,7 +190,7 @@ body {
     position: fixed;
     bottom: 80px;
     right: 0;
-    width: 500px;
+    width: 400px;
     height: calc(100vh - 180px);
     overflow-y: auto;
     padding: 20px;
@@ -206,11 +199,5 @@ body {
     border-radius: 10px; /* 圆角边框 */
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* 添加阴影 */
     transition: box-shadow 0.3s ease-in-out; /* 添加过渡效果 */
-
     z-index: 10;
-}
-
-
-.artistlist-div:hover {
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* 悬停时增加阴影效果 */
 }

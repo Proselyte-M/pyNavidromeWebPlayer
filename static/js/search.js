@@ -74,16 +74,19 @@ function searchAlbums(query) {
         if (data.status === 'ok') {
             var albumsHtml = '<div class="row">';
             data.albums.forEach(function (album) {
-                albumsHtml += '<div class="col-md-3">';
-                albumsHtml += '<div class="card mb-4 shadow-sm">';
-                albumsHtml += `<img src="/cover/${album.coverArt}" class="card-img-top" alt="Album Cover">`;
+                albumsHtml += '<div class="col-md-2 mb-4">'; // 调整为col-md-2
+                albumsHtml += '<div class="card shadow-sm">';
+                albumsHtml += `<div class="square-img-container">`;
+                
+                // 使用 .card-img-top 类来确保图片正常显示
+                albumsHtml += `<img class="card-img-top square-img" src="/cover/${album.coverArt}" alt="${album.album} Album Cover - TouHou Music" onclick="loadAlbumDetails('${album.id}')">`;
+                albumsHtml += `</div>`;
                 albumsHtml += '<div class="card-body">';
-                albumsHtml += `<h5 class="card-title">${album.name}</h5>`;
-                albumsHtml += `<p class="card-text">${album.artist}</p>`;
-                albumsHtml += `<button class="btn btn-primary" onclick="loadAlbumDetails('${album.id}')">View Album</button>`;
-                albumsHtml += '</div>';
-                albumsHtml += '</div>';
-                albumsHtml += '</div>';
+                albumsHtml += `<h5 class="card-title">${album.album}</h5>`;
+                albumsHtml += `<p class="card-text">${album.artist} - ${album.year}</p>`;
+                albumsHtml += '</div>'; // 关闭 card-body
+                albumsHtml += '</div>'; // 关闭 card
+                albumsHtml += '</div>'; // 关闭 col-md-2
             });
             albumsHtml += '</div>';
             $('#content').html(albumsHtml);
@@ -100,24 +103,21 @@ function searchArtists(query) {
     $.getJSON('/search_artists', { query: query }, function (data) {
         console.log(data);
         if (data.status === 'ok') {
-            var artistsHtml = '<div class="row">';
+            var artistsHtml = '<ul class="list-group">';
             data.artists.forEach(function (artist) {
-                artistsHtml += '<div class="col-md-3">';
-                artistsHtml += '<div class="card mb-4 shadow-sm">';
-                artistsHtml += '<div class="card-body">';
-                artistsHtml += `<h5 class="card-title">${artist.name}</h5>`;
-                artistsHtml += `<button class="btn btn-primary" onclick="loadArtistDetails('${artist.id}')">View Artist</button>`;
-                artistsHtml += '</div>';
-                artistsHtml += '</div>';
-                artistsHtml += '</div>';
+                artistsHtml += '<li class="list-group-item">';
+                artistsHtml += `<a href="#" onclick="loadArtistDetails('${artist.id}')"><h5>${artist.name}</h5></a>`;
+                artistsHtml += '</li>';
             });
-            artistsHtml += '</div>';
+            artistsHtml += '</ul>';
             $('#content').html(artistsHtml);
         } else {
             $('#content').html('<p>' + data.message + '</p>');
         }
     });
 }
+
+
 
 function searchSongs(query) {
     $('#up-button').prop('disabled', true);
@@ -128,13 +128,14 @@ function searchSongs(query) {
         if (data.status === 'ok') {
             var songsHtml = '<div class="row">';
             data.songs.forEach(function (song) {
-                songsHtml += '<div class="col-md-3">';
-                songsHtml += '<div class="card mb-4 shadow-sm">';
+                songsHtml += '<div class="col-md-2 mb-4">';
+                songsHtml += '<div class="card shadow-sm">';
+                songsHtml += `<div class="square-img-container">`;
+                songsHtml += `<<img class="card-img-top square-img" src="/cover/${song.coverArt}" alt="${song.artist} Album Cover - TouHou Music" onclick="playSong('${song.id}', '${song.title}', '${song.coverArt}','${song.artist}')">`;
+                songsHtml += `</div>`;
                 songsHtml += '<div class="card-body">';
-                songsHtml += `<img src="/cover/${song.coverArt}" class="card-img-top" alt="Album Cover">`;
                 songsHtml += `<h5 class="card-title">${song.track}.${song.title}</h5>`;
                 songsHtml += `<p class="card-text">${song.artist}</p>`;
-                songsHtml += `<button class="btn btn-primary" onclick="playSong('${song.id}', '${song.title}', '${song.albumId}')">Play Song</button>`;
                 songsHtml += `<button class="btn btn-primary" onclick="loadAlbumDetails('${song.albumId}')">View Album</button>`;
                 songsHtml += '</div>';
                 songsHtml += '</div>';
