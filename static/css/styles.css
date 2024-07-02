@@ -34,9 +34,8 @@ body {
     position: fixed;
     bottom: 0;
     left: 0;
-    padding: 10px; /* 可以根据需要调整内边距 */
-    /* 如果不需要背景色，可以不设置背景颜色 */
-    background-color: transparent; /* 或者使用 rgba(0, 0, 0, 0) 完全透明 */
+    size: 20px;
+
 }
 
 /* 搜索栏样式 */

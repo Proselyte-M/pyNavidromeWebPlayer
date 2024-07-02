@@ -4,8 +4,6 @@ window.addEventListener('popstate', function (event) {
 });
 var globalpage = 0;
 $(document).ready(function () {
-    // 页面加载时保持播放器区域隐藏
-    $('#player').hide();
     // 页面初始化时的处理
 
     checkUrlPage();

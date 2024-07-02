@@ -275,7 +275,10 @@ def play_song(song_id):
             logging.error(f"Failed to stream song: {e}")
             yield b''
 
-    return Response(generate(), content_type='audio/mp4')
+    return Response(generate(), content_type='audio/mp4', headers={
+        'Content-Disposition': 'inline; filename="song.mp4"',
+        'Cache-Control': 'no-cache'
+    })
 
 @app.route('/generate_token/<song_id>')
 def generate_token_endpoint(song_id):
