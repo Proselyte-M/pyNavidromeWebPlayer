@@ -23,7 +23,7 @@ function loadAlbums(page) {
 
             
             data.albums.forEach(function (album) {
-                albumsHtml += '<div class="col-md-2 mb-4">'; // 调整为col-md-2
+                albumsHtml += '<div class="col-md-2 col-2 mb-4">'; // 调整为col-md-2
                 albumsHtml += '<div class="card shadow-sm">';
                 albumsHtml += `<div class="square-img-container">`;
                 

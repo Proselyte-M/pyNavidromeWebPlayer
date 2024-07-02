@@ -60,11 +60,6 @@ $(document).ready(function () {
     });
 });
 
-
-
-
-
-
 function searchAlbums(query) {
     $('#up-button').prop('disabled', true);
     $('#down-button').prop('disabled', true);
@@ -116,8 +111,6 @@ function searchArtists(query) {
         }
     });
 }
-
-
 
 function searchSongs(query) {
     $('#up-button').prop('disabled', true);

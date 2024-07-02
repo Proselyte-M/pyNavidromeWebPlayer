@@ -1,16 +1,7 @@
 /* styles.css */
 
 /* 基本样式 */
-body {
-    background-color: #f8f9fa;
-    /* 背景色 */
-    font-family: 'Roboto', sans-serif;
-    /* 字体 */
-    color: #333;
-    /* 文字颜色 */
-    padding-bottom: 100px;
-    /* 底部填充 */
-}
+
 .blur-background {
     position: fixed;
     top: 0;
@@ -104,14 +95,7 @@ body {
     padding: 10px; /* 可选：设置内边距 */
 }
 /* 响应式设计 */
-@media (max-width: 768px) {
-
-    .col-md-3,
-    .col-md-9 {
-        width: 100%;
-        /* 列宽度为100% */
-    }
-
+@media (max-width: 1550px) {
     .artistlist-div {
         display: none;
         /* 隐藏元素 */

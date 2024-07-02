@@ -16,23 +16,22 @@
     <div class="container-fluid">
         <!-- 搜索栏 -->
         <div class="row mb-4 search-bar">
-            <div class="col-md-3 col-12">
+            <div class="col-md-3 col-sm-6 col-12">
                 <input type="text" id="search-album-input" class="form-control" placeholder="Search for albums...">
             </div>
-            <div class="col-md-3 col-12">
+            <div class="col-md-3 col-sm-6 col-12">
                 <input type="text" id="search-artist-input" class="form-control" placeholder="Search for artists...">
             </div>
-            <div class="col-md-3 col-12">
+            <div class="col-md-3 col-sm-6 col-12">
                 <input type="text" id="search-song-input" class="form-control" placeholder="Search for songs...">
             </div>
-            <div class="col-md-3 col-12">
+            <div class="col-md-3 col-sm-6 col-12">
                 <div class="row">
                     <div class="col-3">
                         <button id="up-button" class="btn btn-primary btn-block" onclick="upPage('0')">←</button>
                     </div>
                     <div class="col-3">
-                        <button id="home-button" class="btn btn-primary btn-block"
-                            onclick="loadAlbums(globalpage)">🏠</button>
+                        <button id="home-button" class="btn btn-primary btn-block" onclick="loadAlbums(globalpage)">🏠</button>
                     </div>
                     <div class="col-3">
                         <button id="down-button" class="btn btn-primary btn-block" onclick="downPage('0')">→</button>
@@ -43,6 +42,7 @@
                 </div>
             </div>
         </div>
+        
 
 
         <div class="row mianpage">
@@ -110,13 +110,13 @@
     <script src="{{ url_for('static', filename='js/artist.js') }}"></script>
     <script>
         let player = new cplayer({
-          element: document.getElementById('player'),
-          width: 300,
-          dropDownMenuMode: 'top',
-          autoplay:true
+            element: document.getElementById('player'),
+            width: 300,
+            dropDownMenuMode: 'top',
+            autoplay: true
         })
 
-      </script>
+    </script>
 </body>
 
 </html>
