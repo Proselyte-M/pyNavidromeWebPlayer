@@ -1,11 +1,11 @@
 function loadAlbums(page) {
     $('#up-button').prop('disabled', false);
     $('#down-button').prop('disabled', false);
-    console.log('Loading albums...');
+    console.info('Loading albums list...');
     $('#content').html('<p>Loading albums...</p>'); // 显示加载中信息
     history.pushState(null, '', `/albumlist/${page}`);  // 这里可以根据需要自定义URL路径
     $.getJSON(`/get_albums/${page}`, function (data) {
-        //console.log(data);
+        console.debug(data);
         if (data.status === 'ok') { 
             var albumsHtml = "";
             albumsHtml += `<div>`;
@@ -62,15 +62,16 @@ function loadAlbums(page) {
 
 
 
+
 function loadAlbumDetails(albumId) {
     $('#up-button').prop('disabled', true);
     $('#down-button').prop('disabled', true);
-    console.log('Loading album details for album ID:', albumId);
+    console.info('Loading album details for album ID:', albumId);
     var url = '/get_album_details/' + albumId;
     $('#content').html('<p>Loading album details...</p>'); // 显示加载中信息
     history.pushState(null, '', '/albums/' + albumId); // 这里可以根据需要自定义URL路径
     $.getJSON(url, function (data) {
-        //console.log(data);
+        console.debug(data);
         if (data.status === 'ok') {
             var album = data.album;
             var albumHtml = '<div class="row">';
@@ -89,7 +90,7 @@ function loadAlbumDetails(albumId) {
             albumHtml += `<li class="list-group-item"><strong>社团名称:</strong> <span href="/artist/${album.artistId}" style="cursor: pointer; text-decoration: underline;" onclick="loadArtistDetails('${"",album.artistId}')">${album.artist}</span></li>`;
             albumHtml += `<li class="list-group-item"><strong>歌曲总数:</strong> ${album.songCount}</li>`;
             albumHtml += `<li class="list-group-item"><strong>首发日期:</strong> ${album.year}</li>`;
-            albumHtml += `<li class="list-group-item"><strong>专辑总长:</strong> ${formatTime(album.duration)}</li>`;
+            albumHtml += `<li class="list-group-item play-album" onclick="playAlbum('${albumId}')"><strong>播放专辑:</strong> ▶总长${formatTime(album.duration)}</li>`;
             albumHtml += '</ul>';
             albumHtml += '</div>';
             albumHtml += '</div>'; // 结束row
@@ -136,10 +137,8 @@ function loadAlbumDetails(albumId) {
 function formatTime(seconds) {
     let minutes = Math.floor(seconds / 60);
     let remainingSeconds = seconds % 60;
-    
     // 使用 padStart 函数来确保秒数和分钟数为两位数
     let formattedTime = `${minutes.toString().padStart(2, '0')}分${remainingSeconds.toString().padStart(2, '0')}秒`;
-    
     return formattedTime;
 }
 

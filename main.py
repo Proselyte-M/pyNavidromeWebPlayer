@@ -4,6 +4,7 @@ import hashlib
 import hmac
 import time
 import os
+import json
 import logging
 from datetime import datetime, timedelta, timezone
 
@@ -16,6 +17,8 @@ CLIENT_NAME = 'pywebplayer'
 USERNAME = os.getenv('SUBSONIC_USERNAME', 'test')  # 使用环境变量存储用户名
 PASSWORD = os.getenv('SUBSONIC_PASSWORD', 'test')  # 使用环境变量存储密码
 FLASKDEBUG = os.getenv('SUBSONIC_PASSWORD', 'False')
+INDEXJSON_FILE_PATH = 'indexes.json'
+CACHE_DURATION = 86400  # 缓存持续时间，以秒为单位，这里设为1小时
 
 CACHE_DIR = 'cover_cache'
 os.makedirs(CACHE_DIR, exist_ok=True)
@@ -146,6 +149,8 @@ def get_albums(page):
         response.raise_for_status()
         if response.json()['subsonic-response']['status'] == 'ok':
             albums = response.json()['subsonic-response'].get('albumList', {}).get('album', [])
+            fields_to_keep = {"index", "artist", "album", "name","coverArt","year","id"}
+            albums = filter_json(albums, fields_to_keep)
             return jsonify({'status': 'ok', 'albums': albums})
         else:
             error_message = response.json()['subsonic-response'].get('error', {}).get('message', 'Unknown error')
@@ -172,6 +177,8 @@ def get_album_details(album_id):
         response.raise_for_status()
         if response.json()['subsonic-response']['status'] == 'ok':
             album = response.json()['subsonic-response'].get('album', {})
+            fields_to_keep = {"index", "artist", "album", "name","coverArt","year","id","song","title","track","artistId","duration","songCount"}
+            album = filter_json(album, fields_to_keep)
             return jsonify({'status': 'ok', 'album': album})
         else:
             error_message = response.json()['subsonic-response'].get('error', {}).get('message', 'Unknown error')
@@ -232,6 +239,19 @@ def getArtist(artist_id):
     
 @app.route('/getIndexes')
 def getIndexes():
+    def is_file_from_today(file_path):
+        if os.path.exists(file_path):
+            file_time = datetime.fromtimestamp(os.path.getmtime(file_path))
+            return file_time.date() == datetime.now().date()
+        return False
+
+    if is_file_from_today(INDEXJSON_FILE_PATH):
+        with open(INDEXJSON_FILE_PATH, 'r') as file:
+            indexes = json.load(file)
+            response = make_response(jsonify({'status': 'ok', 'indexes': indexes}))
+            response.headers['Cache-Control'] = f'public, max-age={CACHE_DURATION}'
+            return response
+
     token, salt = generate_token(PASSWORD)
 
     try:
@@ -246,13 +266,36 @@ def getIndexes():
         response.raise_for_status()
         if response.json()['subsonic-response']['status'] == 'ok':
             indexes = response.json()['subsonic-response'].get('indexes', {})
-            return jsonify({'status': 'ok', 'indexes': indexes})
+            fields_to_keep = {"index", "artist", "album", "name","id"}
+            indexes = filter_json(indexes, fields_to_keep)
+            with open(INDEXJSON_FILE_PATH, 'w') as file:
+                json.dump(indexes, file)
+            response = make_response(jsonify({'status': 'ok', 'indexes': indexes}))
+            response.headers['Cache-Control'] = f'public, max-age={CACHE_DURATION}'
+            return response
         else:
             error_message = response.json()['subsonic-response'].get('error', {}).get('message', 'Unknown error')
             return jsonify({'status': 'error', 'message': error_message})
     except requests.RequestException as e:
         logging.error(f"Failed to get indexes: {e}")
         return jsonify({'status': 'error', 'message': 'Failed to get indexes'})
+
+def filter_json(data, fields_to_keep):
+    """
+    过滤 JSON 数据，仅保留指定的字段。
+
+    :param data: 原始 JSON 数据
+    :param fields_to_keep: 要保留的字段列表
+    :return: 过滤后的 JSON 数据
+    """
+    if isinstance(data, dict):
+        return {key: filter_json(value, fields_to_keep) for key, value in data.items() if key in fields_to_keep}
+    elif isinstance(data, list):
+        return [filter_json(item, fields_to_keep) for item in data]
+    else:
+        return data
+    
+
 
 @app.route('/play/<song_id>')
 def play_song(song_id):
@@ -263,7 +306,7 @@ def play_song(song_id):
 
     token, salt = generate_token(PASSWORD)
     stream_url = f'{SUBSONIC_API_URL}/stream.view?u={USERNAME}&t={token}&s={salt}&v={API_VERSION}&c={CLIENT_NAME}&id={song_id}'
-
+    #print(stream_url)
     def generate():
         try:
             with requests.get(stream_url, stream=True) as r:
@@ -277,7 +320,7 @@ def play_song(song_id):
 
     return Response(generate(), content_type='audio/mp4', headers={
         'Content-Disposition': 'inline; filename="song.mp4"',
-        'Cache-Control': 'no-cache'
+        'Cache-Control': 'public, max-age=31536000'
     })
 
 @app.route('/generate_token/<song_id>')
@@ -305,6 +348,8 @@ def search():
         response.raise_for_status()
         if response.json()['subsonic-response']['status'] == 'ok':
             albums = response.json()['subsonic-response'].get('searchResult2', {}).get('album', [])
+            fields_to_keep = {"index", "artist", "album", "name","coverArt","year","id"}
+            albums = filter_json(albums, fields_to_keep)
             return jsonify({'status': 'ok', 'albums': albums})
         else:
             error_message = response.json()['subsonic-response'].get('error', {}).get('message', 'Unknown error')
@@ -332,6 +377,8 @@ def search_artists():
         response.raise_for_status()
         if response.json()['subsonic-response']['status'] == 'ok':
             artists = response.json()['subsonic-response'].get('searchResult2', {}).get('artist', [])
+            fields_to_keep = {"artist","name","id"}
+            artists = filter_json(artists, fields_to_keep)
             return jsonify({'status': 'ok', 'artists': artists})
         else:
             error_message = response.json()['subsonic-response'].get('error', {}).get('message', 'Unknown error')
@@ -359,6 +406,8 @@ def search_songs():
         response.raise_for_status()
         if response.json()['subsonic-response']['status'] == 'ok':
             songs = response.json()['subsonic-response'].get('searchResult2', {}).get('song', [])
+            fields_to_keep = {"artist", "album","coverArt","id","song","title","track","artistId","albumId"}
+            songs = filter_json(songs, fields_to_keep)
             return jsonify({'status': 'ok', 'songs': songs})
         else:
             error_message = response.json()['subsonic-response'].get('error', {}).get('message', 'Unknown error')

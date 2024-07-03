@@ -25,7 +25,7 @@ function checkUrlPage(urlpage) {
     if (urlPageRegex.test(currentPath)) {
         // 提取album_id
         var album_id = currentPath.split('/')[2]; // 假设路径格式为 /albums/<album_id>
-        console.log('check url album_id:', album_id);
+        //console.log('check url album_id:', album_id);
         // 执行你的JavaScript方法，例如加载专辑详情
         loadAlbumDetails(album_id);
         return;
@@ -35,7 +35,7 @@ function checkUrlPage(urlpage) {
     if (urlPageRegex.test(currentPath)) {
         // 提取artistId
         var artist_id = currentPath.split('/')[2]; // 假设路径格式为 /artistId/<album_id>
-        console.log('check url artist_id:', artist_id);
+        //console.log('check url artist_id:', artist_id);
         // 执行你的JavaScript方法，例如加载专辑详情
         loadArtistDetails(artist_id);
         return;
@@ -73,7 +73,7 @@ function checkUrlPage(urlpage) {
     if (urlPageRegex.test(currentPath)) {
         // 提取artistId
         var albumListPage = currentPath.split('/')[2]; // 假设路径格式为 /artistId/<album_id>
-        console.log('check url albumListPage:', albumListPage);
+        //console.log('check url albumListPage:', albumListPage);
         // 执行你的JavaScript方法，例如加载专辑详情
         globalpage = parseInt(albumListPage);
         loadAlbums(albumListPage);
@@ -127,3 +127,4 @@ function downPage() {
             popup.style.display = 'none';
         }
     });
+

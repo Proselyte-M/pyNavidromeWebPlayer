@@ -185,3 +185,15 @@
     transition: box-shadow 0.3s ease-in-out; /* 添加过渡效果 */
     z-index: 10;
 }
+
+.play-album {
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.play-album:hover {
+    background-color: #f0f0f0; /* 添加一个背景色作为提示 */
+}
+
+
+/* ******************************************* */

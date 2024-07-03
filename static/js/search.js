@@ -65,7 +65,7 @@ function searchAlbums(query) {
     $('#down-button').prop('disabled', true);
     $('#content').html('<p>Searching...</p>');
     $.getJSON('/search', { query: query }, function (data) {
-        console.log(data);
+        console.debug(data);
         if (data.status === 'ok') {
             var albumsHtml = '<div class="row">';
             data.albums.forEach(function (album) {
@@ -96,7 +96,7 @@ function searchArtists(query) {
     $('#down-button').prop('disabled', true);
     $('#content').html('<p>Searching...</p>');
     $.getJSON('/search_artists', { query: query }, function (data) {
-        console.log(data);
+        console.debug(data);
         if (data.status === 'ok') {
             var artistsHtml = '<ul class="list-group">';
             data.artists.forEach(function (artist) {
@@ -117,7 +117,7 @@ function searchSongs(query) {
     $('#down-button').prop('disabled', true);
     $('#content').html('<p>Searching...</p>');
     $.getJSON('/search_songs', { query: query }, function (data) {
-        console.log(data);
+        console.debug(data);
         if (data.status === 'ok') {
             var songsHtml = '<div class="row">';
             data.songs.forEach(function (song) {

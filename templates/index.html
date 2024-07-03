@@ -62,8 +62,7 @@
         </div>
     </div>
 
-<div id="player">
-    <!-- cPlayer will render its UI here -->
+<div id="aplayer">
 </div>
 
 <div id="loading-spinner" style="display: none;">
@@ -74,9 +73,6 @@
     <!-- Error modal HTML -->
     <div id="error-message"></div>
 </div>
-
-
-
 
 <!-- 错误模态框 -->
 <div id="error-modal" class="modal fade" tabindex="-1" role="dialog">
@@ -100,22 +96,73 @@
     <!-- 引入jQuery和Bootstrap的单独文件 -->
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/cplayer/dist/cplayer.min.js"></script>
+    <!--<script src="https://cdn.jsdelivr.net/npm/cplayer/dist/cplayer.min.js"></script>-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script>
 
     <!-- 引入拆分后的JavaScript文件 -->
+    <!--<script src="{{ url_for('static', filename='js/lyric.js') }}"></script>-->
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     <script src="{{ url_for('static', filename='js/albums.js') }}"></script>
     <script src="{{ url_for('static', filename='js/search.js') }}"></script>
     <script src="{{ url_for('static', filename='js/playback.js') }}"></script>
     <script src="{{ url_for('static', filename='js/artist.js') }}"></script>
+    
+    
     <script>
-        let player = new cplayer({
-            element: document.getElementById('player'),
-            width: 300,
-            dropDownMenuMode: 'top',
-            autoplay: true
-        })
+        const ap = new APlayer({
+            container: document.getElementById('aplayer'),
+            autoplay: true,
+            fixed: true,
+        });
+        ap.on('listshow', function () {
+            setTimeout(function () {
+                ap.list.hide();
+            }, 10000); // 10000毫秒 = 10秒
+        });
+        class LyricsInfo {
+            constructor() {
+                this.tracks = [];
+                this.lyrics = {};
+            }
 
+            addTrackInfoToList(singers, song, id, des) {
+                this.tracks.push({ singers, song, id, des });
+            }
+
+            addLyrics(lyric, id) {
+                this.lyrics[id] = lyric;
+            }
+
+            getTrackList() {
+                return this.tracks;
+            }
+
+            getLyrics(id) {
+                return this.lyrics[id];
+            }
+        }
+
+        async function downloadLyrics(artist, title) {
+            const netEaseSource = new AumNetEaseSource();
+            const info = new LyricsInfo();
+
+            const numTracks = await netEaseSource.getLyricsList(artist, title, info);
+            if (numTracks > 0) {
+                const tracks = info.getTrackList();
+                const track = tracks[0]; // 获取第一个匹配的歌曲
+                const lyricsDownloaded = await netEaseSource.getLyrics(track.id, info);
+
+                if (lyricsDownloaded) {
+                    const lyrics = info.getLyrics(track.id);
+                    console.log('Lyrics:', lyrics);
+                } else {
+                    console.log('Failed to download lyrics');
+                }
+            } else {
+                console.log('No tracks found');
+            }
+        }
     </script>
 </body>
 

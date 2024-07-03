@@ -6,7 +6,7 @@ function loadArtistDetails(artistId) {
     // 更新URL
     history.pushState(null, '', '/artist/' + artistId);  // 这里可以根据需要自定义URL路径
     $.getJSON('/getArtist/' + artistId, function (data) {
-        console.log(data);
+        console.debug(data);
         if (data.status === 'ok') {
             var albumsHtml = ""
             albumsHtml += `<div>`
@@ -60,7 +60,7 @@ function getIndexes() {
     $.getJSON('/getIndexes', function (data) {
         if (data.status === 'ok') {
             var artistsHtml = ''; // 确保在这里定义 artistsHtml 变量
-            //console.log(data.indexes.index);
+            console.debug(data.indexes.index);
             artistsHtml +="<h3>同人社团列表</h3>"
             data.indexes.index.forEach(function (list) {
                 artistsHtml += '<div class="card mb-4 shadow-sm">';
@@ -82,6 +82,9 @@ function getIndexes() {
         $('.artistlist').html('<p>Failed to load indexes. Please try again later.</p>'); // 修正选择器
     });
 }
+
+
+
 
 // 页面加载完毕后调用 getIndexes 函数
 $(document).ready(function () {
