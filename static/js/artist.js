@@ -30,19 +30,19 @@ function loadArtistDetails(artistId) {
             albumsHtml += '</div>'; // 关闭 row
             $('#content').html(albumsHtml);
             // 获取相册数量
-            var albumCount = data.artist.album.length;
+            //var albumCount = data.artist.album.length;
             // 随机选择一个封面索引
-            var randomIndex = Math.floor(Math.random() * albumCount);
-            var randomAlbum = data.artist.album[randomIndex];
-            $('body').css({
-                'background-image': `url('/cover/${randomAlbum.coverArt}')`,
-                'background-size': 'cover',
-                'background-position': 'center'
-            });
+            //var randomIndex = Math.floor(Math.random() * albumCount);
+            //var randomAlbum = data.artist.album[randomIndex];
+            //$('body').css({
+            //    'background-image': `url('/cover/${randomAlbum.coverArt}')`,
+            //    'background-size': 'cover',
+            //    'background-position': 'center'
+            //});
             // 添加或移除背景模糊效果
-            if ($('.blur-background').length === 0) {
-                $('<div class="blur-background"></div>').appendTo('body');
-            }
+            //if ($('.blur-background').length === 0) {
+            //    $('<div class="blur-background"></div>').appendTo('body');
+            //}
             
         } else {
             $('#content').html('<p>' + $('<div>').text(data.message).html() + '</p>');

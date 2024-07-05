@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify, request, send_from_directory, Response, abort, make_response,send_file
+from flask import Flask, render_template, jsonify, request, send_from_directory, Response, abort, make_response
 import requests
 import hashlib
 import hmac
@@ -8,13 +8,17 @@ import json
 import logging
 from datetime import datetime, timedelta, timezone
 import logging.config
+from dotenv import load_dotenv
+from thwiki_scraper import THWikiAlbumScraper
 
 app = Flask(__name__, static_url_path='/static')
 
-SECRET_KEY = 'ppp'
-SUBSONIC_API_URL = 'http://10.39.160.20:4533/rest'
+load_dotenv()
+
+SECRET_KEY = os.getenv('SECRET_KEY','ppp')
+SUBSONIC_API_URL = os.getenv('SUBSONIC_API_URL','http://0.0.0.0/rest')
 API_VERSION = '1.16.1'
-CLIENT_NAME = 'pywebplayer'
+CLIENT_NAME = os.getenv('CLIENT_NAME','pywebplayer')
 USERNAME = os.getenv('SUBSONIC_USERNAME', 'test')  # 使用环境变量存储用户名
 PASSWORD = os.getenv('SUBSONIC_PASSWORD', 'test')  # 使用环境变量存储密码
 FLASKDEBUG = os.getenv('SUBSONIC_PASSWORD', 'False')
@@ -86,6 +90,7 @@ def cache_cover_art(cover_art_id, token, salt, size, filetype):
                 'size': size,
                 'f': filetype  # 指定获取的图片格式为 WebP
             })
+            app.logger.debug(f"api访问地址: {response.url}")
             response.raise_for_status()
             with open(cover_path, 'wb') as f:
                 app.logger.debug(f"获取到图片，保存到: {cover_path}")
@@ -149,7 +154,7 @@ def index():
 
 @app.route('/get_albums/<page>')
 def get_albums(page):
-    size = 18
+    size = 20
     token, salt = generate_token(PASSWORD)
     number = int(page)
     result = number * size
@@ -167,6 +172,7 @@ def get_albums(page):
             'size': size,
             'offset': page
         })
+        app.logger.debug(f"api访问地址: {response.url}")
         response.raise_for_status()
         if response.json()['subsonic-response']['status'] == 'ok':
             albums = response.json()['subsonic-response'].get('albumList', {}).get('album', [])
@@ -196,6 +202,7 @@ def get_album_details(album_id):
             'f': 'json',
             'id': album_id
         })
+        app.logger.debug(f"api访问地址: {response.url}")
         response.raise_for_status()
         if response.json()['subsonic-response']['status'] == 'ok':
             album = response.json()['subsonic-response'].get('album', {})
@@ -254,9 +261,12 @@ def getArtist(artist_id):
             'f': 'json',
             'id': artist_id
         })
+        app.logger.debug(f"api访问地址: {response.url}")
         response.raise_for_status()
         if response.json()['subsonic-response']['status'] == 'ok':
             artist = response.json()['subsonic-response'].get('artist', {})
+            fields_to_keep = {"index", "artist", "album", "name","coverArt","year","id"}
+            artist = filter_json(artist, fields_to_keep)
             return jsonify({'status': 'ok', 'artist': artist})
         else:
             error_message = response.json()['subsonic-response'].get('error', {}).get('message', 'Unknown error')
@@ -294,6 +304,7 @@ def getIndexes():
             'c': CLIENT_NAME,
             'f': 'json'
         })
+        app.logger.debug(f"api访问地址: {response.url}")
         response.raise_for_status()
         if response.json()['subsonic-response']['status'] == 'ok':
             indexes = response.json()['subsonic-response'].get('indexes', {})
@@ -340,6 +351,7 @@ def play_song(song_id):
 
     token, salt = generate_token(PASSWORD)
     stream_url = f'{SUBSONIC_API_URL}/stream.view?u={USERNAME}&t={token}&s={salt}&v={API_VERSION}&c={CLIENT_NAME}&id={song_id}'
+    app.logger.debug(f"api访问地址: {stream_url}")
     #print(stream_url)
     def generate():
         try:
@@ -381,6 +393,7 @@ def search():
             'query': query,
             'albumCount': 50
         })
+        app.logger.debug(f"api访问地址: {response.url}")
         response.raise_for_status()
         if response.json()['subsonic-response']['status'] == 'ok':
             albums = response.json()['subsonic-response'].get('searchResult2', {}).get('album', [])
@@ -410,6 +423,7 @@ def search_artists():
             'query': query,
             'artistCount': 100
         })
+        app.logger.debug(f"api访问地址: {response.url}")
         response.raise_for_status()
         if response.json()['subsonic-response']['status'] == 'ok':
             artists = response.json()['subsonic-response'].get('searchResult2', {}).get('artist', [])
@@ -439,6 +453,7 @@ def search_songs():
             'query': query,
             'songCount': 100
         })
+        app.logger.debug(f"api访问地址: {response.url}")
         response.raise_for_status()
         if response.json()['subsonic-response']['status'] == 'ok':
             songs = response.json()['subsonic-response'].get('searchResult2', {}).get('song', [])
@@ -451,6 +466,130 @@ def search_songs():
     except requests.RequestException as e:
         app.logger.error(f"Failed to search songs: {e}")
         return jsonify({'status': 'error', 'message': 'Failed to search songs'})
+
+
+@app.route('/getGenres')
+def getGenres():
+    token, salt = generate_token(PASSWORD)
+    app.logger.debug(f"客户端尝试获取音乐风格")
+    try:
+        response = requests.get(f'{SUBSONIC_API_URL}/getGenres.view', params={
+            'u': USERNAME,
+            't': token,
+            's': salt,
+            'v': API_VERSION,
+            'c': CLIENT_NAME,
+            'f': 'json',
+        })
+        app.logger.debug(f"api访问地址: {response.url}")
+        response.raise_for_status()
+        if response.json()['subsonic-response']['status'] == 'ok':
+            genres = response.json()['subsonic-response'].get('genres', {})
+            return jsonify({'status': 'ok', 'genres': genres})
+        else:
+            error_message = response.json()['subsonic-response'].get('error', {}).get('message', 'Unknown error')
+            return jsonify({'status': 'error', 'message': error_message})
+    except requests.RequestException as e:
+        app.logger.error(f"Failed to get genres: {e}")
+        return jsonify({'status': 'error', 'message': 'Failed to get genres'})
+    
+
+@app.route('/getSongsByGenre/<Genre>/<offset>')
+def getSongsByGenre(Genre,offset):
+    number = int(offset)
+    result = number * 500
+    page = str(result)
+    token, salt = generate_token(PASSWORD)
+    app.logger.debug(f"客户端尝试获取风格详情: {Genre},{offset}")
+    try:
+        response = requests.get(f'{SUBSONIC_API_URL}/getSongsByGenre.view', params={
+            'u': USERNAME,
+            't': token,
+            's': salt,
+            'v': API_VERSION,
+            'c': CLIENT_NAME,
+            'f': 'json',
+            'count':'500',
+            'genre': Genre,
+            'offset': page
+        })
+        app.logger.debug(f"api访问地址: {response.url}")
+        response.raise_for_status()
+        
+        # 检查响应中是否包含有效数据
+        if 'subsonic-response' in response.json() and response.json()['subsonic-response']['status'] == 'ok':
+            subsonic_response = response.json()['subsonic-response']
+            
+            # 使用 get() 方法安全获取 songsByGenre 中的 song 列表，如果不存在则返回空列表
+            GenreList = subsonic_response.get('songsByGenre', {}).get('song', [])
+            
+            albums = {}
+            # 遍历每首歌曲
+            for song in GenreList:
+                album_name = song.get("album")
+                if album_name:
+                    if album_name not in albums:
+                        # 初始化专辑信息
+                        albums[album_name] = {
+                            "album": album_name,
+                            "artist": song.get("artist"),
+                            "year": song.get("year"),
+                            "genre": song.get("genre"),
+                            "albumId": song.get("albumId"),
+                            "artistId": song.get("artistId"),
+                            "coverArt": song.get("coverArt"),
+                    #        "songs": []
+                        }
+                    # 将歌曲信息添加到专辑中
+                    #albums[album_name]["songs"].append({
+                    #    "id": song.get("id"),
+                    #    "title": song.get("title"),
+                    #    "artist": song.get("artist"),
+                    #    "year": song.get("year"),
+                    #    "genre": song.get("genre")
+                    #})
+            
+            return jsonify({'status': 'ok', 'GenreList': list(albums.values())})
+        
+        else:
+            error_message = response.json().get('subsonic-response', {}).get('error', {}).get('message', 'Unknown error')
+            return jsonify({'status': 'error', 'message': error_message})
+    
+    except requests.RequestException as e:
+        app.logger.error(f"Failed to get getSongsByGenre details: {e}")
+        return jsonify({'status': 'error', 'message': 'Failed to get getSongsByGenre details'})
+
+
+
+
+
+
+
+
+
+
+
+######thwiki######
+scraper = THWikiAlbumScraper()  # 创建一个THWikiAlbumScraper实例
+
+@app.route('/getWikiAlbumInfo/<artist_name>/<album_name>')
+def getWikiAlbumInfo(artist_name,album_name):
+    app.logger.debug(f"尝试从thwiki获取: {artist_name}-{album_name}")
+    album_id = scraper.get_album_info(artist_name,album_name)
+    if (album_id == ""):
+        return ""
+    album_id = album_id[0]
+    app.logger.debug(f"专辑ID为: {album_id}")
+    if (album_id==''):
+        return r"{}"
+    album_info = scraper.get_album_detail(album_id)
+    return jsonify({"album_info": album_info})
+
+
+
+
+
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0',debug=True)
