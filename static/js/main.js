@@ -169,7 +169,7 @@ function checkStatus() {
       if (subsonicResponse && subsonicResponse.status === 'ok') {
         statusBox.style.backgroundColor = 'green'; // 绿色背景
         statusBox.style.color = 'black'; // 黑色文字
-        statusBox.textContent = '服务器OK'; // 更新文字内容为服务器OK
+        statusBox.textContent = subsonicResponse.type +'\r\n' + subsonicResponse.serverVersion; // 更新文字内容为服务器OK
       } else {
         statusBox.style.backgroundColor = 'red'; // 红色背景
         statusBox.style.color = 'white'; // 白色文字

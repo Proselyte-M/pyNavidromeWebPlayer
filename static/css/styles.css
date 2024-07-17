@@ -321,4 +321,6 @@ body {
     text-align: center; /* 文字居中 */
     line-height: 40px; /* 垂直居中 */
     transition: background-color 0.3s ease, color 0.3s ease;
+    font-size: 10px;
+    line-height: 2em;
   }
