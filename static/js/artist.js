@@ -18,7 +18,7 @@ function loadArtistDetails(artistId) {
 
             data.artist.album.forEach(function (album) {
                 artistHtml += `
-                    <div class="col-lg-2 col-md-3 col-sm-6 col-12 mb-4 hvr-grow">
+                    <div class="${albumliststyle}">
                         <div class="card shadow-sm">
                             <div class="square-img-container">
                                 <img class="card-img-top square-img" title="点击打开专辑：${album.album}" src="/newcover/${albumlistCoverSize}/${album.coverArt}" alt="${album.album} Album Cover - TouHou Music" onclick="loadAlbumDetails('${album.id}')">

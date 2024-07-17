@@ -4,14 +4,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="description" content="Explore a vast collection of TouHou music albums, discover artists.">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+    <meta name="application-name" content="TouhouMusicPlayer">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <!-- iPad and iPad mini (with @2× display) iOS ≥ 8 -->
+    <link rel="apple-touch-icon-precomposed" sizes="180x180" href="{{ url_for('static', filename='icon/180.png') }}">
+    <!-- iPad 3+ (with @2× display) iOS ≥ 7 -->
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="{{ url_for('static', filename='icon/152.png') }}">
+    <!-- iPad (with @2× display) iOS ≤ 6 -->
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="{{ url_for('static', filename='icon/144.png') }}">
+    <!-- iPhone (with @2× and @3 display) iOS ≥ 7 -->
+    <link rel="apple-touch-icon-precomposed" sizes="120x120" href="{{ url_for('static', filename='icon/120.png') }}">
+    <!-- iPhone (with @2× display) iOS ≤ 6 -->
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="{{ url_for('static', filename='icon/114.png') }}">
+    <!-- iPad mini and the first- and second-generation iPad (@1× display) on iOS ≥ 7 -->
+    <link rel="apple-touch-icon-precomposed" sizes="76x76" href="{{ url_for('static', filename='icon/76.png') }}">
+    <!-- iPad mini and the first- and second-generation iPad (@1× display) on iOS ≤ 6 -->
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="{{ url_for('static', filename='icon/72.png') }}">
+    <!-- Android Stock Browser and non-Retina iPhone and iPod Touch -->
+    <link rel="apple-touch-icon-precomposed" href="{{ url_for('static', filename='icon/180.png') }}">
+    <!-- Fallback for everything else -->
+    <link rel="shortcut icon" href="{{ url_for('static', filename='icon/180.png') }}">
+    
     <title>TouHou Music - Discover Albums, Artists, and Songs</title>
-    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
-    <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hover.css/2.1.1/css/hover-min.css"
         integrity="sha512-SJw7jzjMYJhsEnN/BuxTWXkezA2cRanuB8TdCNMXFJjxG9ZGSKOX5P3j03H6kdMxalKHZ7vlBMB4CagFP/de0A=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap-grid.css" rel="stylesheet">
     <link href="https://cdn.bootcdn.net/ajax/libs/aplayer/1.10.1/APlayer.min.css" rel="stylesheet">
 </head>
@@ -21,23 +45,23 @@
     <div class="container-fluid">
         <!-- 搜索栏 -->
         <div class="row mb-4 search-bar">
-            <div id="search-input" class="col-md-3 col-sm-12 mb-2 mb-sm-0">
+            <div id="search-input" class="col-lg-3 col-md-4 col-sm-12 mb-2 mb-sm-12">
                 <input type="text" id="search-input-text" class="form-control" placeholder="Search for albums artists or songs...">
             </div>
-            <div id="search-button-div" class="col-md-1 col-sm-6 col-6 mb-2 mb-sm-0">
+            <div id="search-button-div" class="col-lg-1 col-md-2 col-sm-6 col-6 mb-2 mb-sm-6">
                 <button id="search-button" class="btn btn-primary btn-block text-nowrap" onclick="globalsearch()">搜索</button>
             </div>
-            <div class="col-md-1 col-sm-6 col-6 mb-2 mb-sm-0">
+            <div class="col-lg-2 col-md-2 col-sm-6 col-6 mb-2 mb-sm-6">
                 <button id="showFavoriteBtn" class="btn btn-primary btn-block text-nowrap" onclick="displayFavoriteAlbums()">查看收藏</button>
             </div>
-            <div id="dynamic" class="col-md-3 col-sm-6 col-6 mb-2 mb-sm-0">
+            <div id="dynamic" class="col-lg-2 col-md-3 col-sm-6 col-6 mb-2 mb-sm-0">
                 <select id="dynamic-select" class="form-control">
                     <!-- 这里是动态加载的选项 -->
                 </select>
             </div>
-            <div class="col-md-4 col-sm-6 col-12">
+            <div class="col-md-4 col-sm-12 col-12">
                 <div class="row">
-                    <div class="col-12 d-flex justify-content-between">
+                    <div class="col-12 mb-sm-12 d-flex justify-content-between">
                         <button id="up-button" class="btn btn-primary btn-block me-2 text-nowrap" onclick="upPage('0')">←</button>
                         <button id="home-button" class="btn btn-primary btn-block me-2 text-nowrap" onclick="loadAlbums(globalpage)">🏠</button>
                         <button id="down-button" class="btn btn-primary btn-block me-2 text-nowrap" onclick="downPage('0')">→</button>
@@ -47,7 +71,7 @@
             </div>
         </div>
         <div class="row mianpage">
-            <div class="col-md-9 col-12">
+            <div id="mainpage" class="col-md-9 col-12">
                 <!-- 主体内容 -->
                 <div id="content">
                     <!-- 内容通过AJAX加载 -->
@@ -119,9 +143,10 @@
     }
 });
             var songlisteffcsion = "hvr-underline-reveal";
-            var albumlistCoverSize = "200"
+            var albumlistCoverSize = "300"
             var albumdtlCoverSize = "300"
             var playerCoverSize = "50"
+            var albumliststyle = "col-xl-3 col-lg-3 col-md-3 col-sm-6 col-6 mb-4 hvr-grow"
 
         </script>
 </body>

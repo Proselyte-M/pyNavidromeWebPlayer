@@ -74,14 +74,14 @@ function displayFavoriteAlbums() {
     contentDiv.append(textDiv);
 
     albumIds.forEach(albumId => {
-        $.ajax({
+        $.ajax({    
             url: '/get_album_details/' + albumId,
             method: 'GET',
             success: function (album) {
                 console.debug(album)
                 album = album.album;
                 const albumHtml = `
-                    <div class="col-lg-2 col-md-3 col-sm-6 col-12 mb-4 hvr-grow">
+                    <div class="${albumliststyle}">
                         <div class="card shadow-sm">
                             <div class="square-img-container">
                                 <img class="card-img-top square-img" title="点击打开专辑：${album.name}" src="/newcover/${albumlistCoverSize}/${album.coverArt}" alt="${album.name} Album Cover - TouHou Music" onclick="loadAlbumDetails('${album.id}')">
@@ -118,7 +118,7 @@ function generateAlbumsHtml(albums, page) {
     `;
     albums.forEach(function (album) {
         albumsHtml += `
-<div class="col-lg-2 col-md-3 col-sm-6 col-12 mb-4 hvr-grow">
+<div class="${albumliststyle}">
     <div class="card shadow-sm">
         <div class="square-img-container">
             <img class="card-img-top square-img" title="点击打开专辑：${album.album}" src="/newcover/${albumlistCoverSize}/${album.coverArt}" alt="${album.album} Album Cover - TouHou Music" onclick="loadAlbumDetails('${album.id}')">

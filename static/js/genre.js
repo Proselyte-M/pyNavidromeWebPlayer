@@ -36,7 +36,7 @@ function loadAlbumsByGenres(genres, page) {
 
             data.GenreList.forEach(function (album) {
                 genresHtml += `
-                    <div class="col-md-2 col-2 mb-4">
+                    <div class="${albumliststyle}">
                         <div class="card shadow-sm">
                             <div class="square-img-container">
                                 <img class="card-img-top square-img" src="/newcover/${albumlistCoverSize}/${album.coverArt}" alt="${album.album} Album Cover - TouHou Music" onclick="loadAlbumDetails('${album.albumId}')">

@@ -212,47 +212,62 @@ body {
 
 
 /* 响应式设计 */
-@media (max-width: 1550px) {
-    .artistlist-div {
-        display: none; /* 隐藏元素 */
+@media (orientation: portrait) {
+    body {
+        background-image: url("https://img.paulzzh.com/touhou/random?size=wap");
+        /* 其他背景属性保持不变 */
     }
-    .dynamic-select {
-        display: none; /* 隐藏元素 */
+}
+@media (max-width: 991px) {
+    #mainpage{
+        width: 100%;
     }
-    #content {
-        margin-top: 130px; /* 根据需要调整距离 */
-    }
-    .container-fluid {
-        padding-top: 0px; /* 确保内容不会被固定的搜索栏覆盖 */
+    .artistlist-div{
+        display: none;
     }
     #dynamic{
-        display: none; /* 隐藏动态选择 */
+        visibility: hidden; /* 或者 visibility: collapse; */
+        display: none;
     }
 }
 
-@media (max-width: 728px) {
-    .artistlist-div {
-        display: none; /* 隐藏艺术家列表 */
+@media (max-width: 820px) {
+    #mainpage{
+        width: 100%;
     }
-    .dynamic-select {
-        display: none; /* 隐藏动态选择 */
-    }
-    .container-fluid {
-        padding-top: 70px; /* 确保内容不会被固定的搜索栏覆盖 */
+    .artistlist-div{
+        display: none;
     }
     #dynamic{
-        display: none; /* 隐藏动态选择 */
+        visibility: hidden; /* 或者 visibility: collapse; */
+        display: none;
     }
 }
 
-@media (max-width: 515px) {
-
-    .container-fluid {
-        padding-top: 40px; /* 确保内容不会被固定的搜索栏覆盖 */
+@media (max-width: 768px) {
+    #mainpage {
+        width: 100%;
+    }
+    .artistlist-div{
+        display: none;
     }
     #dynamic{
-        display: none; /* 隐藏动态选择 */
+        visibility: hidden; /* 或者 visibility: collapse; */
+        display: none;
     }
+}
+
+@media (max-width: 576px) {
+    #dynamic{
+        display: none;
+    }
+    .artistlist-div{
+        display: none;
+    }
+    #mainpage {
+        padding-top: 80px;
+    }
+
 }
 
 
