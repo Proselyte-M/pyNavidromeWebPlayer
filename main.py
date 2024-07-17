@@ -10,8 +10,15 @@ from datetime import datetime, timedelta, timezone
 import logging.config
 from dotenv import load_dotenv
 from thwiki_scraper import THWikiAlbumScraper
+from pydub import AudioSegment
+import io
+import subprocess
+from flask_cors import CORS 
+
 
 app = Flask(__name__, static_url_path='/static')
+cors = CORS(app)
+
 
 load_dotenv()
 
@@ -26,6 +33,21 @@ INDEXJSON_FILE_PATH = 'indexes.json'
 CACHE_DURATION = 86400  # 缓存持续时间，以秒为单位，这里设为1小时
 CACHE_DIR = 'cover_cache'
 logging.config.fileConfig('logging.ini')
+
+def replace_slashes(obj):
+    if isinstance(obj, str):
+        return obj.replace('/', '／')
+    elif isinstance(obj, list):
+        return [replace_slashes(item) for item in obj]
+    elif isinstance(obj, dict):
+        return {key: replace_slashes(value) for key, value in obj.items()}
+    return obj
+
+def process_json(json_str):
+    obj = json.loads(json_str)
+    new_obj = replace_slashes(obj)
+    new_json_str = json.dumps(new_obj, ensure_ascii=False, indent=4)
+    return new_json_str
 
 
 def generate_encrypted_param(song_id):
@@ -108,9 +130,35 @@ def cache_cover_art(cover_art_id, token, salt, size, filetype):
     return cover_path
 
 
-@app.route('/cover/<cover_art_id>')
-def cover(cover_art_id):
-    size = "300"
+def process_value(input_value):
+    try:
+        # 尝试将输入转换为浮点数
+        value = float(input_value)
+    except ValueError:
+        # 如果输入的不是数字，返回300
+        return 300
+
+    # 检查值的范围并返回相应的结果
+    if value < 50:
+        return 50
+    elif value < 100:
+        return round(value / 10) * 10
+    elif value < 300:
+        return round(value / 50) * 50
+    elif value < 1000:
+        return round(value / 100) * 100
+    elif value < 2000:
+        return round(value / 200) * 200
+    elif value < 3000:
+        return round(value / 500) * 500
+    else:
+        return 3000
+    
+
+@app.route('/newcover/<size>/<cover_art_id>')
+def newcover(size,cover_art_id):
+    print(size,cover_art_id)
+    size = str(process_value(size))
     token, salt = generate_token(PASSWORD)
     cover_path = cache_cover_art(cover_art_id, token, salt,size,'webp')
     app.logger.debug(f"客户端尝试获取图片: {cover_art_id}")
@@ -118,6 +166,7 @@ def cover(cover_art_id):
         response = send_from_directory(os.path.dirname(cover_path), os.path.basename(cover_path))
         response.headers['Cache-Control'] = 'public, max-age=31536000'
         response.headers['Expires'] = (datetime.now(timezone.utc) + timedelta(days=365)).strftime("%a, %d %b %Y %H:%M:%S GMT")
+        response.headers['Content-Type'] = 'image/webp'  # 设置正确的 Content-Type
         app.logger.debug(f"向客户端返回图片: {cover_path}")
         return response
     else:
@@ -125,25 +174,10 @@ def cover(cover_art_id):
         return jsonify({'status': 'error', 'message': 'Cover art not found'}), 404
     
 
-from datetime import datetime, timedelta, timezone
+@app.route('/popup-content')
+def popup():
+    return render_template('popup.html')
 
-@app.route('/cover/o/<album_name>/<cover_art_id>')
-def cover_o(album_name,cover_art_id):
-    size = "2000"
-    token, salt = generate_token(PASSWORD)
-    cover_path = cache_cover_art(cover_art_id, token, salt, size, "jpg")  # 使用正确的文件扩展名
-    app.logger.debug(f"客户端尝试获取图片原片: {album_name}-{cover_art_id}")
-    if cover_path and os.path.exists(cover_path):
-        # 发送文件并设置正确的 Content-Type 头
-        response = send_from_directory(os.path.dirname(cover_path), os.path.basename(cover_path))
-        response.headers['Cache-Control'] = 'public, max-age=31536000'
-        response.headers['Expires'] = (datetime.now(timezone.utc) + timedelta(days=365)).strftime("%a, %d %b %Y %H:%M:%S GMT")
-        response.headers['Content-Type'] = 'image/jpeg'  # 设置正确的 Content-Type
-        app.logger.debug(f"向客户端返回图片: {cover_path}")
-        return response
-    else:
-        app.logger.debug(f"客户端获取图片失败: {cover_art_id}")
-        return jsonify({'status': 'error', 'message': 'Cover art not found'}), 404
 
 
 
@@ -208,6 +242,7 @@ def get_album_details(album_id):
             album = response.json()['subsonic-response'].get('album', {})
             fields_to_keep = {"index", "artist", "album", "name","coverArt","year","id","song","title","track","artistId","duration","songCount"}
             album = filter_json(album, fields_to_keep)
+            album = replace_slashes(album)
             return jsonify({'status': 'ok', 'album': album})
         else:
             error_message = response.json()['subsonic-response'].get('error', {}).get('message', 'Unknown error')
@@ -221,6 +256,11 @@ def albums(album_id):
     app.logger.debug(f"客户端尝试通过url访问专辑详情: {album_id}")
     return render_template('index.html', album_id=album_id)
 
+@app.route('/displayFavoriteAlbums')
+def displayFavoriteAlbums():
+    app.logger.debug(f"客户端尝试通过url访问收藏的专辑")
+    return render_template('index.html')
+
 @app.route('/artist/<artist_id>')
 def artist(artist_id):
     app.logger.debug(f"客户端尝试通过url访问艺术家详情: {artist_id}")
@@ -231,19 +271,9 @@ def albumlist(page):
     app.logger.debug(f"客户端尝试通过url访问专辑列表: {page}")
     return render_template('index.html', page=page)
 
-@app.route('/searchAlbums/<query>')
+@app.route('/search/<query>')
 def searchAlbums(query):
-    app.logger.debug(f"客户端尝试通过url访问专辑搜索: {query}")
-    return render_template('index.html', query=query)
-
-@app.route('/searchArtists/<query>')
-def searchArtists(query):
-    app.logger.debug(f"客户端尝试通过url访问艺术家搜索: {query}")
-    return render_template('index.html', query=query)
-
-@app.route('/searchSongs/<query>')
-def searchSongs(query):
-    app.logger.debug(f"客户端尝试通过url访问歌曲搜索: {query}")
+    app.logger.debug(f"客户端尝试通过url访问搜索: {query}")
     return render_template('index.html', query=query)
 
 
@@ -339,12 +369,11 @@ def filter_json(data, fields_to_keep):
         return data
     
 
-
 @app.route('/play/<song_id>')
 def play_song(song_id):
     app.logger.debug(f"客户端尝试播放音乐：{song_id}")
     encrypted_param = request.args.get('token')
-    
+
     if not encrypted_param or not verify_encrypted_param(song_id, encrypted_param):
         app.logger.debug(f"音乐url超期：{song_id}")
         abort(403)  # Forbidden
@@ -352,22 +381,34 @@ def play_song(song_id):
     token, salt = generate_token(PASSWORD)
     stream_url = f'{SUBSONIC_API_URL}/stream.view?u={USERNAME}&t={token}&s={salt}&v={API_VERSION}&c={CLIENT_NAME}&id={song_id}'
     app.logger.debug(f"api访问地址: {stream_url}")
-    #print(stream_url)
-    def generate():
-        try:
-            with requests.get(stream_url, stream=True) as r:
-                r.raise_for_status()
-                for chunk in r.iter_content(chunk_size=1024):
-                    if chunk:
-                        yield chunk
-        except requests.RequestException as e:
-            app.logger.error(f"Failed to stream song: {e}")
-            yield b''
+    
+    try:
+        r = requests.get(stream_url, stream=True)
+        r.raise_for_status()
+        content_length = r.headers.get('Content-Length')
+        app.logger.debug(f"内容长度: {content_length}")
 
-    return Response(generate(), content_type='audio/mp4', headers={
-        'Content-Disposition': 'inline; filename="song.mp4"',
-        'Cache-Control': 'public, max-age=31536000'
-    })
+        def generate():
+            for chunk in r.iter_content(chunk_size=1024):
+                if chunk:
+                    yield chunk
+
+        # 设置动态的文件名为 song_id
+        filename = f"{song_id}.m4a"
+        response = Response(generate(), content_type='audio/mp4', headers={
+            'Content-Disposition': f'inline; filename="{filename}"',
+            'Cache-Control': 'public, max-age=31536000',
+            'Accept-Ranges': 'bytes'
+        })
+
+        if content_length:
+            response.headers['Content-Length'] = content_length
+        
+        return response
+
+    except requests.RequestException as e:
+        app.logger.error(f"Failed to stream song: {e}")
+        abort(500)  # Internal Server Error
 
 @app.route('/generate_token/<song_id>')
 def generate_token_endpoint(song_id):
@@ -562,8 +603,26 @@ def getSongsByGenre(Genre,offset):
 
 
 
+#################SEO########################
+@app.route('/sitemap.xml')
+def sitemap():
+    # 返回静态文件中的sitemap.xml
+    return send_from_directory('static', 'sitemap.xml')
 
+@app.route('/sitemap_index.xml')
+def sitemap_index():
+    # 返回静态文件中的sitemap.xml
+    return send_from_directory('static', 'sitemap.xml')
+    
+@app.route('/sitemap_with_schema.html')
+def sitemap_with_schema():
+    # 返回静态文件中的sitemap.xml
+    return send_from_directory('static', 'sitemap_with_schema.html')
 
+@app.route('/robots.txt')
+def robots():
+    # 返回静态文件中的sitemap.xml
+    return send_from_directory('static', 'robots.txt')
 
 
 

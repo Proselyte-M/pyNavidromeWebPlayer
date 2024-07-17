@@ -1,3 +1,6 @@
 cover_cache/
 .env
 __pycache__/
+thwikiinfo.db
+indexes.json
+templates/popup.html

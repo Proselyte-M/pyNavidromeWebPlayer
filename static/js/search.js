@@ -1,143 +1,120 @@
-$(document).ready(function () {
-    var searchTimer; // 声明一个变量用于存储定时器ID
-
-    var $searchAlbumInput = $('#search-album-input');
-    var $searchArtistInput = $('#search-artist-input');
-    var $searchSongInput = $('#search-song-input');
+function globalsearch(query) {
+    if (query !== undefined) {
+        document.getElementById("search-input-text").value = query;
+    }
+    const searchText = document.getElementById("search-input-text").value;
+    history.pushState(null, '', `/search/${searchText}`);
     
-    // 搜索功能 - 专辑
-    $('#search-album-input').on('keyup', function () {
-        var query = $(this).val();
-        clearTimeout(searchTimer); // 清除之前的定时器
+    const sHtml = `
+        <div id="search-Albums" class="collapsible" aria-expanded="false">
+            搜索专辑
+        </div>
+        <hr>
+        <div id="search-Artists" class="collapsible" aria-expanded="false">
+            搜索艺术家
+        </div>
+        <hr>
+        <div id="search-Songs" class="collapsible" aria-expanded="false">
+            搜索歌曲
+        </div>
+    `;
+    $('#content').html(sHtml);
 
-        // 设置新的定时器，在用户输入停止一秒后执行搜索
-        searchTimer = setTimeout(function () {
-            if (query.length > 2) {
-                searchAlbums(query);
-            } else if (query.length === 0) {
-                loadAlbums(globalpage);
-            }
-            history.pushState(null, '', `/searchAlbums/${query}`);
-            $searchArtistInput.val('');
-            $searchSongInput.val('');
-        }, 1000); // 延时1秒（1000毫秒）
-    });
+    search('albums', searchText);
+    search('artists', searchText);
+    search('songs', searchText);
+}
 
-    // 搜索功能 - 艺术家
-    $('#search-artist-input').on('keyup', function () {
-        var query = $(this).val();
-        clearTimeout(searchTimer); // 清除之前的定时器
+function search(type, query) {
+    const searchSelectors = {
+        'albums': '#search-Albums',
+        'artists': '#search-Artists',
+        'songs': '#search-Songs'
+    };
 
-        // 设置新的定时器，在用户输入停止一秒后执行搜索
-        searchTimer = setTimeout(function () {
-            if (query.length > 2) {
-                searchArtists(query);
-            } else if (query.length === 0) {
-                loadAlbums(globalpage);
-            }
-            history.pushState(null, '', `/searchArtists/${query}`); 
-            $searchAlbumInput.val('');
-            $searchSongInput.val('');
-        }, 1000); // 延时1秒（1000毫秒）
-    });
+    $(searchSelectors[type]).html('<p>Searching...</p>');
 
-    // 搜索功能 - 歌曲
-    $('#search-song-input').on('keyup', function () {
-        var query = $(this).val();
-        clearTimeout(searchTimer); // 清除之前的定时器
+    const endpoints = {
+        'albums': '/search',
+        'artists': '/search_artists',
+        'songs': '/search_songs'
+    };
 
-        // 设置新的定时器，在用户输入停止一秒后执行搜索
-        searchTimer = setTimeout(function () {
-            if (query.length > 2) {
-                searchSongs(query);
-            } else if (query.length === 0) {
-                loadAlbums(globalpage);
-            }
-            history.pushState(null, '', `/searchSongs/${query}`); 
-            $searchAlbumInput.val('');
-            $searchArtistInput.val('');
-        }, 1000); // 延时1秒（1000毫秒）
-    });
-});
-
-function searchAlbums(query) {
-    $('#up-button').prop('disabled', true);
-    $('#down-button').prop('disabled', true);
-    $('#content').html('<p>Searching...</p>');
-    $.getJSON('/search', { query: query }, function (data) {
-        console.debug(data);
+    $.getJSON(endpoints[type], { query: query }, function (data) {
         if (data.status === 'ok') {
-            var albumsHtml = '<div class="row">';
-            data.albums.forEach(function (album) {
-                albumsHtml += '<div class="col-md-2 mb-4">'; // 调整为col-md-2
-                albumsHtml += '<div class="card shadow-sm">';
-                albumsHtml += `<div class="square-img-container">`;
-                
-                // 使用 .card-img-top 类来确保图片正常显示
-                albumsHtml += `<img class="card-img-top square-img" src="/cover/${album.coverArt}" alt="${album.album} Album Cover - TouHou Music" onclick="loadAlbumDetails('${album.id}')">`;
-                albumsHtml += `</div>`;
-                albumsHtml += '<div class="card-body">';
-                albumsHtml += `<h5 class="card-title">${album.album}</h5>`;
-                albumsHtml += `<p class="card-text">${album.artist} - ${album.year}</p>`;
-                albumsHtml += '</div>'; // 关闭 card-body
-                albumsHtml += '</div>'; // 关闭 card
-                albumsHtml += '</div>'; // 关闭 col-md-2
-            });
-            albumsHtml += '</div>';
-            $('#content').html(albumsHtml);
+            let htmlContent = generateHtmlContent(type, data);
+            $(searchSelectors[type]).html(htmlContent);
         } else {
-            $('#content').html('<p>' + data.message + '</p>');
+            showError(data.message, searchSelectors[type]);
         }
+    }).fail(function (jqXHR, textStatus, errorThrown) {
+        console.error(`Failed to search ${type}:`, textStatus, errorThrown);
+        showError(`Failed to search ${type}. Please try again later.`, searchSelectors[type]);
     });
 }
 
-function searchArtists(query) {
-    $('#up-button').prop('disabled', true);
-    $('#down-button').prop('disabled', true);
-    $('#content').html('<p>Searching...</p>');
-    $.getJSON('/search_artists', { query: query }, function (data) {
-        console.debug(data);
-        if (data.status === 'ok') {
-            var artistsHtml = '<ul class="list-group">';
-            data.artists.forEach(function (artist) {
-                artistsHtml += '<li class="list-group-item">';
-                artistsHtml += `<a href="#" onclick="loadArtistDetails('${artist.id}')"><h5>${artist.name}</h5></a>`;
-                artistsHtml += '</li>';
+function generateHtmlContent(type, data) {
+    let htmlContent = '';
+
+    if (type === 'albums') {
+        if (data.albums.length > 0) {
+            htmlContent = '<div class="row album-list"><ul class="list-group"><li class="list-group-item"><h5>专辑：</h5></li></ul>';
+            data.albums.forEach(album => {
+                htmlContent += `
+                    <div class="col-lg-2 col-md-3 col-sm-6 col-12 mb-4 hvr-grow">
+                        <div class="card shadow-sm">
+                            <div class="square-img-container">
+                                <img class="card-img-top square-img" title="点击打开专辑：${album.album}" src="/newcover/${albumlistCoverSize}/${album.coverArt}" alt="${album.album} Album Cover - TouHou Music" onclick="loadAlbumDetails('${album.id}')">
+                                <button class="playalbumbutton" title="点击播放专辑：${album.album}" onclick="playAlbum('${album.id}')">▶</button>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title" title="${album.album}">${album.album}</h5>
+                                <p class="card-text" title="${album.artist} - ${album.year}">${album.artist} - ${album.year}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
             });
-            artistsHtml += '</ul>';
-            $('#content').html(artistsHtml);
+            htmlContent += '</div>';
         } else {
-            $('#content').html('<p>' + data.message + '</p>');
+            htmlContent = '<ul class="list-group"><li class="list-group-item"><h5>没有找到专辑。</h5></li></ul>';
         }
-    });
+    } else if (type === 'artists') {
+        if (data.artists.length > 0) {
+            htmlContent = '<ul class="list-group"><li class="list-group-item"><h5>艺术家：</h5></li>';
+            data.artists.forEach(artist => {
+                htmlContent += `<a href="javascript:void(0);" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center hvr-glow" onclick="loadArtistDetails('${artist.id}')"><h5>${artist.name}</h5></a>`;
+            });
+            htmlContent += '</ul>';
+        } else {
+            htmlContent = '<ul class="list-group"><li class="list-group-item"><h5>没有找到艺术家。</h5></li></ul>';
+        }
+    } else if (type === 'songs') {
+        if (data.songs.length > 0) {
+            htmlContent = '<div class="list-group"><li class="list-group-item"><h5>歌曲：</h5></li>';
+            data.songs.forEach(song => {
+                htmlContent += `
+                    <a href="javascript:void(0);" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center hvr-glow" onclick="playSong('${song.id}', '${song.title}', '${song.coverArt}', '${song.artist}')">
+                        <div class="d-flex align-items-center">
+                            <img src="/newcover/${playerCoverSize}/${song.coverArt}" alt="${song.artist} Album Cover - TouHou Music" class="img-thumbnail mr-3" style="width: 60px; height: 60px;">
+                            <div class="song-info">
+                                <h5 class="mb-1">${song.track}. ${song.title}</h5>
+                                <p class="mb-1">${song.artist}</p>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-primary" onclick="event.stopPropagation(); loadAlbumDetails('${song.albumId}')">打开专辑</button>
+                    </a>
+                `;
+            });
+            htmlContent += '</div>';
+        } else {
+            htmlContent = '<ul class="list-group"><li class="list-group-item"><h5>没有找到歌曲。</h5></li></ul>';
+        }
+    }
+
+    return htmlContent;
 }
 
-function searchSongs(query) {
-    $('#up-button').prop('disabled', true);
-    $('#down-button').prop('disabled', true);
-    $('#content').html('<p>Searching...</p>');
-    $.getJSON('/search_songs', { query: query }, function (data) {
-        console.debug(data);
-        if (data.status === 'ok') {
-            var songsHtml = '<div class="row">';
-            data.songs.forEach(function (song) {
-                songsHtml += '<div class="col-md-2 mb-4">';
-                songsHtml += '<div class="card shadow-sm">';
-                songsHtml += `<div class="square-img-container">`;
-                songsHtml += `<<img class="card-img-top square-img" src="/cover/${song.coverArt}" alt="${song.artist} Album Cover - TouHou Music" onclick="playSong('${song.id}', '${song.title}', '${song.coverArt}','${song.artist}')">`;
-                songsHtml += `</div>`;
-                songsHtml += '<div class="card-body">';
-                songsHtml += `<h5 class="card-title">${song.track}.${song.title}</h5>`;
-                songsHtml += `<p class="card-text">${song.artist}</p>`;
-                songsHtml += `<button class="btn btn-primary" onclick="loadAlbumDetails('${song.albumId}')">View Album</button>`;
-                songsHtml += '</div>';
-                songsHtml += '</div>';
-                songsHtml += '</div>';
-            });
-            songsHtml += '</div>';
-            $('#content').html(songsHtml);
-        } else {
-            $('#content').html('<p>' + data.message + '</p>');
-        }
-    });
+function showError(message, selector) {
+    $(selector).html(`<p>${message}</p>`);
 }

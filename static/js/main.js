@@ -2,129 +2,158 @@
 window.addEventListener('popstate', function (event) {
     checkUrlPage();
 });
+
 var globalpage = 0;
 
 $(document).ready(function () {
     // 页面初始化时的处理
-
     checkUrlPage();
+    getIndexes();
 
-    // 监听 popstate 事件，以便在用户点击浏览器的前进或后退按钮时检查URL路径
-    window.addEventListener('popstate', function (event) {
-        checkUrlPage();
 
-    });
 });
 
-
-
-// 检查当前URL是否为 /albums/<album_id>，如果是则执行相应的方法
-function checkUrlPage(urlpage) {
-
+// 检查当前URL路径，并根据路径执行相应操作
+function checkUrlPage() {
     var currentPath = window.location.pathname;
-    var urlPageRegex = /^\/albums\/[\w\d]+$/; // 此处使用正则表达式检查路径格式，可以根据实际情况调整
+    var regexMappings = [
+        { regex: /^\/albums\/([\w\d]+)$/, handler: loadAlbumDetails },
+        { regex: /^\/artist\/([\w\d]+)$/, handler: loadArtistDetails },
+        { regex: /^\/search\/(.*)$/, handler: globalsearch },
+        { regex: /^\/albumlist\/(\d+)$/, handler: loadAlbums },
+        { regex: /^\/displayFavoriteAlbums$/, handler: displayFavoriteAlbums }
+    ];
 
-    if (urlPageRegex.test(currentPath)) {
-        // 提取album_id
-        var album_id = currentPath.split('/')[2]; // 假设路径格式为 /albums/<album_id>
-        //console.log('check url album_id:', album_id);
-        // 执行你的JavaScript方法，例如加载专辑详情
-        loadAlbumDetails(album_id);
-        return;
-    }
-    var urlPageRegex = /^\/artist\/[\w\d]+$/; // 此处使用正则表达式检查路径格式，可以根据实际情况调整
-
-    if (urlPageRegex.test(currentPath)) {
-        // 提取artistId
-        var artist_id = currentPath.split('/')[2]; // 假设路径格式为 /artistId/<album_id>
-        //console.log('check url artist_id:', artist_id);
-        // 执行你的JavaScript方法，例如加载专辑详情
-        loadArtistDetails(artist_id);
-        return;
-    }
-    ///搜索相关的
-    var urlPageRegexAlbums = /^\/searchAlbums\/.*$/; // 匹配以 /searchAlbums/ 开头的路径
-
-    if (urlPageRegexAlbums.test(currentPath)) {
-        var query = currentPath.split('/')[2]; // 假设路径格式为 /searchAlbums/<album_id>
-        searchAlbums(decodeURIComponent(query));
-        return;
+    for (var i = 0; i < regexMappings.length; i++) {
+        var mapping = regexMappings[i];
+        var match = currentPath.match(mapping.regex);
+        if (match) {
+            var param = match[1]; // 提取匹配的参数
+            mapping.handler(decodeURIComponent(param));
+            return;
+        }
     }
 
-    var urlPageRegexArtists = /^\/searchArtists\/.*$/; // 匹配以 /searchArtists/ 开头的路径
-
-    if (urlPageRegexArtists.test(currentPath)) {
-        var query = currentPath.split('/')[2]; // 假设路径格式为 /searchArtists/<artist_id>
-        searchArtists(decodeURIComponent(query));
-        return;
-    }
-
-    var urlPageRegexSongs = /^\/searchSongs\/.*$/; // 匹配以 /searchSongs/ 开头的路径
-
-    if (urlPageRegexSongs.test(currentPath)) {
-        var query = currentPath.split('/')[2]; // 假设路径格式为 /searchSongs/<song_id>
-        searchSongs(decodeURIComponent(query));
-        return;
-    }
-
-
-    ///以上是搜索相关的
-
-    var urlPageRegex = /^\/albumlist\/\d+$/;
-
-    if (urlPageRegex.test(currentPath)) {
-        // 提取artistId
-        var albumListPage = currentPath.split('/')[2]; // 假设路径格式为 /artistId/<album_id>
-        //console.log('check url albumListPage:', albumListPage);
-        // 执行你的JavaScript方法，例如加载专辑详情
-        globalpage = parseInt(albumListPage);
-        loadAlbums(albumListPage);
-        return;
-    }
+    // 如果没有匹配的路径，则默认加载专辑列表
     loadAlbums(globalpage);
-
 }
 
+// 翻页功能
 function upPage() {
     if (globalpage > 0) {
-        globalpage = globalpage - 1;
+        globalpage--;
         loadAlbums(globalpage);
     }
 }
 
 function downPage() {
-    globalpage = globalpage + 1;
+    globalpage++;
     loadAlbums(globalpage);
 }
 
-
-// 获取按钮和浮动窗口元素
-var button = document.getElementById('about-button');
-var popup = document.createElement('div');
-popup.className = 'popup';
-
-// 添加要显示的内容：笑脸emoji和文本（使用innerHTML来支持换行）
-var emoji = document.createElement('span');
-emoji.textContent = '😊'; // 笑脸emoji
-
-var text = document.createElement('p');
-text.innerHTML = '东方音乐播放站，版权没有<br>有事请联系：admin@thmusic.top<br>如果需要大幅度翻页请直接修改网址里的页面数目<br>就是网址最后的数字。<br>截至目前（2024年6月26日）总共721页。'; // 文本内容，使用innerHTML来支持换行
-
-// 将内容添加到浮动窗口
-popup.appendChild(emoji);
-popup.appendChild(text);
-
-// 将浮动窗口添加到文档中
-document.body.appendChild(popup);
-
-// 点击按钮时显示浮动窗口
 function showPopup() {
-    popup.style.display = 'block';
+    fetch('/popup-content')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('popup').innerHTML = data;
+            document.getElementById('popup').style.display = 'block';
+
+            // 添加点击页面其他地方隐藏弹窗的事件监听器
+            document.addEventListener('click', closePopupOnClickOutside);
+        })
+        .catch(error => console.error('Error fetching popup content:', error));
 }
 
-// 点击浮动窗口外部任意位置隐藏浮动窗口（可选）
-window.addEventListener('click', function (event) {
-    if (event.target !== button && event.target !== popup) {
+function closePopupOnClickOutside(event) {
+    const popup = document.getElementById('popup');
+    if (!popup.contains(event.target)) {
         popup.style.display = 'none';
+        document.removeEventListener('click', closePopupOnClickOutside);
     }
-});
+}
+
+
+// 保存喜欢的专辑到本地cookie
+function saveFavoriteAlbum(albumId) {
+    let favorites = getFavoriteAlbums();
+    favorites.push(albumId);
+    document.cookie = `favorite_albums=${JSON.stringify(favorites)}; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/`;
+    updateButton(albumId);
+}
+
+// 从本地cookie读取喜欢的专辑albumid数组
+function getFavoriteAlbums() {
+    let cookieValue = document.cookie.replace(/(?:(?:^|.*;\s*)favorite_albums\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+    return cookieValue ? JSON.parse(cookieValue) : [];
+}
+
+// 将喜欢的专辑albumid编码为base64导出
+function exportFavoriteAlbumsBase64() {
+    let favorites = getFavoriteAlbums();
+    let base64String = btoa(JSON.stringify(favorites));
+    return base64String;
+}
+
+// 返回喜欢的专辑albumid数组
+function getFavoriteAlbumsArray() {
+    return getFavoriteAlbums();
+}
+
+// 检查本地cookie是否存在指定的albumId，
+function checkAndDisableButton(albumId) {
+    let favorites = getFavoriteAlbums();
+    return favorites.includes(albumId);
+}
+
+// 删除本地cookie中的指定albumId
+function removeFavoriteAlbum(albumId) {
+    let favorites = getFavoriteAlbums();
+    let index = favorites.indexOf(albumId);
+    if (index !== -1) {
+        favorites.splice(index, 1);
+        document.cookie = `favorite_albums=${JSON.stringify(favorites)}; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/`;
+        updateButton(albumId);
+    }
+}
+
+// 根据给定的base64字符串保存收藏列表到cookie，并合并去重
+function importFavoriteAlbumsBase64(base64String) {
+    try {
+        let decodedString = atob(base64String); // 解码base64字符串
+        let importedFavorites = JSON.parse(decodedString); // 将解码后的字符串转换为数组
+
+        let currentFavorites = getFavoriteAlbums(); // 获取当前本地保存的收藏列表
+
+        // 合并去重
+        let mergedFavorites = Array.from(new Set([...currentFavorites, ...importedFavorites]));
+
+        document.cookie = `favorite_albums=${JSON.stringify(mergedFavorites)}; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/`;
+        displayFavoriteAlbums();
+        console.log("导入并合并的收藏专辑列表:", mergedFavorites);
+    } catch (error) {
+        alert("导入收藏专辑列表时发生错误:", error);
+        console.error("导入收藏专辑列表时发生错误:", error);
+        // 可以根据需要处理解析错误的情况，比如显示错误信息给用户
+    }
+}
+
+
+// 更新按钮文字和绑定的方法
+function updateButton(albumId) {
+    let saveFavoriteBtn = document.getElementById('saveFavoriteBtn');
+    if (saveFavoriteBtn) {
+        if (getFavoriteAlbums().includes(albumId)) {
+            saveFavoriteBtn.innerText = "移除收藏";
+            saveFavoriteBtn.onclick = function () {
+                removeFavoriteAlbum(albumId);
+            };
+        } else {
+            saveFavoriteBtn.innerText = "添加到收藏";
+            saveFavoriteBtn.onclick = function () {
+                saveFavoriteAlbum(albumId);
+            };
+        }
+    } else {
+        console.error("Button with ID 'saveFavoriteBtn' not found.");
+    }
+}

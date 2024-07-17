@@ -2,11 +2,20 @@ import sqlite3
 import requests
 import json
 from difflib import get_close_matches
+import re
+
 
 def find_closest_match(json_data, target_value):
     albums = [item[2] for item in json_data]
+    print("查找最接近的:",albums,target_value)
     closest_matches = get_close_matches(target_value, albums)
+    print("最接近的是:",closest_matches)
     return closest_matches
+
+
+def is_numeric(s):
+    return bool(re.match(r'^[+-]?\d+(\.\d+)?$', s))
+
 
 class THWikiAlbumScraper:
     def __init__(self, db_path='thwikiinfo.db'):
@@ -56,7 +65,7 @@ class THWikiAlbumScraper:
             "v": album_name
         }
         response = requests.get(self.base_url, params=params)
-        print(response.text)
+        print(response.url)
         if response.status_code == 200:
             try:
                 json_data = json.loads(response.text)
@@ -100,44 +109,46 @@ class THWikiAlbumScraper:
             return f"Error fetching data: {response.status_code}"
         
     def get_album_detail(self, album_id):
-        # 首先在本地数据库中查找
-        conn = sqlite3.connect(self.db_path)
-        cursor = conn.cursor()
-        cursor.execute('''
-            SELECT detail FROM album_detail WHERE album_id = ?
-        ''', (album_id,))
-        result = cursor.fetchone()
-        if result:
-            conn.close()
-            return json.loads(result[0])  # 返回存储的 JSON 数据
+        if type(album_id) == int:
+            # 首先在本地数据库中查找
+            conn = sqlite3.connect(self.db_path)
+            cursor = conn.cursor()
+            cursor.execute('''
+                SELECT detail FROM album_detail WHERE album_id = ?
+            ''', (album_id,))
+            result = cursor.fetchone()
+            if result:
+                conn.close()
+                return json.loads(result[0])  # 返回存储的 JSON 数据
 
-        # 如果本地没有找到，则从网络获取
-        params = {
-            "m": "2",
-            "g": "2",
-            "o": "1",
-            "d": "kv",
-            "s": "/",
-            "f": "alname+circle+event+date+official+coverurl+coverchar",
-            "p": "name+discno+trackno+time+artist+ogmusic",
-            "a": album_id
-        }
-        response = requests.get(self.base_url, params=params)
-        if response.status_code == 200:
-            try:
-                json_data = json.loads(response.text)
-                # 保存到本地数据库
-                cursor.execute('''
-                    INSERT OR REPLACE INTO album_detail (album_id, detail)
-                    VALUES (?, ?)
-                ''', (album_id, json.dumps(json_data)))
-                conn.commit()
+            # 如果本地没有找到，则从网络获取
+            params = {
+                "m": "2",
+                "g": "2",
+                "o": "1",
+                "d": "kv",
+                "s": "／",
+                "f": "alname+circle+event+date+official+coverurl+coverchar",
+                "p": "name+discno+trackno+time+artist+arrange+vocal+compose+dub+lyric+script+perform+ogmusic",
+                "a": album_id
+            }
+            response = requests.get(self.base_url, params=params)
+            print(response.url)
+            if response.status_code == 200:
+                try:
+                    json_data = json.loads(response.text)
+                    # 保存到本地数据库
+                    cursor.execute('''
+                        INSERT OR REPLACE INTO album_detail (album_id, detail)
+                        VALUES (?, ?)
+                    ''', (album_id, json.dumps(json_data)))
+                    conn.commit()
+                    conn.close()
+                    return json_data
+                except json.JSONDecodeError:
+                    print(response.text)
+                    conn.close()
+                    return "Error decoding JSON data"
+            else:
                 conn.close()
-                return json_data
-            except json.JSONDecodeError:
-                print(response.text)
-                conn.close()
-                return "Error decoding JSON data"
-        else:
-            conn.close()
-            return f"Error fetching data: {response.status_code}"
+                return f"Error fetching data: {response.status_code}"

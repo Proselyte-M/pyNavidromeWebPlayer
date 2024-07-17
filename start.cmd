@@ -1,3 +1,3 @@
 @echo off
-python.exe -m waitress --host=0.0.0.0 --port=5000 --threads=8 main:app
+D:/Program/Python/python.exe d:/UserFile/Maiwulan/Documents/Python¹¤³Ì/navidromeºó¶Ë/main.py
 pause
