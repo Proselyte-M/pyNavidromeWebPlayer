@@ -162,7 +162,7 @@ function updateButton(albumId) {
 const statusBox = document.getElementById('status-box');
 
 function checkStatus() {
-  fetch('http://localhost:5000/ping')
+  fetch('/ping')
     .then(response => response.json())
     .then(data => {
       const subsonicResponse = data['subsonic-response'];
