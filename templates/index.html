@@ -76,7 +76,14 @@
                 <div id="content">
                     <!-- 内容通过AJAX加载 -->
                 </div>
+                <div id="floating-buttons">
+                    <button id="randomalbum-button" class="btn btn-primary btn-block text-nowrap" onclick="loadAlbums(0,20)">最新专辑</button>
+                    <button id="randomalbum-button" class="btn btn-primary btn-block text-nowrap" onclick="loadAlbums(0,20,'random')">随机专辑</button>
+                    <button id="frequentalbum-button" class="btn btn-primary btn-block text-nowrap" onclick="loadAlbums(0,20,'frequent')">最受欢迎</button>
+                    <div id="status-box">服务器状态</div>
+                </div>                
                 <div class="col-md-3 col-12 artistlist-div">
+
                     <div class="artistlist">
                         <h3>同人社团列表</h3>
                         <!-- 艺术家列表内容会被动态加载到这里 -->

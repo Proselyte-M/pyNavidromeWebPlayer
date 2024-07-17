@@ -157,3 +157,35 @@ function updateButton(albumId) {
         console.error("Button with ID 'saveFavoriteBtn' not found.");
     }
 }
+
+
+const statusBox = document.getElementById('status-box');
+
+function checkStatus() {
+  fetch('http://localhost:5000/ping')
+    .then(response => response.json())
+    .then(data => {
+      const subsonicResponse = data['subsonic-response'];
+      if (subsonicResponse && subsonicResponse.status === 'ok') {
+        statusBox.style.backgroundColor = 'green'; // 绿色背景
+        statusBox.style.color = 'black'; // 黑色文字
+        statusBox.textContent = '服务器OK'; // 更新文字内容为服务器OK
+      } else {
+        statusBox.style.backgroundColor = 'red'; // 红色背景
+        statusBox.style.color = 'white'; // 白色文字
+        statusBox.textContent = '服务器出错'; // 更新文字内容为服务器出错
+      }
+    })
+    .catch(error => {
+      console.error('接口查询错误:', error);
+      statusBox.style.backgroundColor = 'red'; // 网络错误也显示红色背景
+      statusBox.style.color = 'white'; // 白色文字
+      statusBox.textContent = '服务器出错'; // 更新文字内容为服务器出错
+    });
+}
+
+// 每5秒查询一次接口状态
+setInterval(checkStatus, 20000);
+
+// 页面加载时先查询一次
+checkStatus();

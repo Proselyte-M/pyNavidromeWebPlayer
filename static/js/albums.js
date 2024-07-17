@@ -1,15 +1,38 @@
-
-
-function loadAlbums(page) {
-    updateButtonState(false);
+function loadAlbums(page, size = 20, type = 'newest') {
+    var titleTest = ""
+    if(type == 'newest'){
+        updateButtonState(false);
+        titleTest = `
+        <div style="background-color: rgba(255, 255, 255, 0.7);">
+            <h5 class="card-title">最新专辑-第${page}页</h5>
+        </div>
+    `
+    }
+    else{
+        if(type == 'random'){
+            titleTest = `
+            <div style="background-color: rgba(255, 255, 255, 0.7);">
+                <h5 class="card-title">随机专辑</h5>
+            </div>
+        `
+        }
+        if(type == 'frequent'){
+            titleTest = `
+            <div style="background-color: rgba(255, 255, 255, 0.7);">
+                <h5 class="card-title">最受欢迎的专辑</h5>
+            </div>
+        `
+        }
+        updateButtonState(true);
+    }
     console.info('Loading albums list...');
     showLoadingMessage('Loading albums...');
 
     history.pushState(null, '', `/albumlist/${page}`);  // 自定义URL路径
 
-    $.getJSON(`/get_albums/${page}`, function (data) {
+    $.getJSON(`/get_albums/${page}`, { size: size, type: type }, function (data) {
         if (data.status === 'ok') {
-            $('#content').html(generateAlbumsHtml(data.albums, page));
+            $('#content').html(generateAlbumsHtml(data.albums,titleTest));
         } else {
             showError(data.message);
         }
@@ -25,6 +48,7 @@ function loadAlbumDetails(albumId) {
     history.pushState(null, '', '/albums/' + albumId);  // 自定义URL路径
 
     $.getJSON(url, function (data) {
+        console.debug(data);
         if (data.status === 'ok') {
             $('#content').html(generateAlbumDetailsHtml(data.album));
             fetchAndUpdateAlbumInfo(data);
@@ -109,13 +133,8 @@ function displayFavoriteAlbums() {
 
 
 
-function generateAlbumsHtml(albums, page) {
-    let albumsHtml = `
-        <div>
-            <h5 class="card-title">最新音乐-第${page}页</h5>
-        </div>
-        <div class="row album-list">
-    `;
+function generateAlbumsHtml(albums,titleTest) {
+    let albumsHtml = titleTest + '<div class="row album-list">';
     albums.forEach(function (album) {
         albumsHtml += `
 <div class="${albumliststyle}">

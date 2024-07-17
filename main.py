@@ -10,11 +10,11 @@ from datetime import datetime, timedelta, timezone
 import logging.config
 from dotenv import load_dotenv
 from thwiki_scraper import THWikiAlbumScraper
-from flask_cors import CORS 
+#from flask_cors import CORS 
 
 
 app = Flask(__name__, static_url_path='/static')
-cors = CORS(app)
+#cors = CORS(app)
 
 
 load_dotenv()
@@ -132,10 +132,6 @@ def generate_token(password):
     app.logger.debug(f"生成Subsonic token: {token}:{salt}")  # 记录调试信息
     return token, salt  # 返回 token 和 salt 的元组
 
-
-import os
-import requests
-
 def cache_cover_art(cover_art_id, token, salt, size, filetype):
     """
     缓存封面图片并返回文件路径。
@@ -242,6 +238,26 @@ def filter_json(data, fields_to_keep):
     else:
         return data
     
+@app.route('/ping')
+def ping():
+    token, salt = generate_token(PASSWORD)
+    try:
+        response = requests.get(f'{SUBSONIC_API_URL}/ping.view', params={
+            'u': USERNAME,
+            't': token,
+            's': salt,
+            'v': API_VERSION,
+            'c': CLIENT_NAME,
+            'f': 'json',
+        })
+        response.raise_for_status()
+        return jsonify(response.json())
+
+    except requests.RequestException as e:
+        app.logger.error(f"Failed to ping: {e}")
+        return jsonify({'status': 'error', 'message': 'Failed to ping'}), 500
+
+    
 
 @app.route('/newcover/<size>/<cover_art_id>')
 def newcover(size,cover_art_id):
@@ -270,14 +286,18 @@ def index():
     app.logger.debug(f"客户端尝试获取主页: {request.remote_addr}")
     return render_template('index.html')
 
-@app.route('/get_albums/<page>')
+@app.route('/get_albums/<page>', methods=['GET'])
 def get_albums(page):
-    size = 20
+    size = request.args.get('size', default=20, type=int)
+    album_type = request.args.get('type', default='newest', type=str)
+    
     token, salt = generate_token(PASSWORD)
     number = int(page)
-    result = number * size
-    page = str(result)
+    offset = number * size
+    page = str(offset)
+    
     app.logger.debug(f"客户端尝试获取专辑列表: {page}")
+    
     try:
         response = requests.get(f'{SUBSONIC_API_URL}/getAlbumList.view', params={
             'u': USERNAME,
@@ -286,12 +306,14 @@ def get_albums(page):
             'v': API_VERSION,
             'c': CLIENT_NAME,
             'f': 'json',
-            'type': 'newest',
+            'type': album_type,
             'size': size,
             'offset': page
         })
+        
         app.logger.debug(f"api访问地址: {response.url}")
         response.raise_for_status()
+        
         if response.json()['subsonic-response']['status'] == 'ok':
             albums = response.json()['subsonic-response'].get('albumList', {}).get('album', [])
             fields_to_keep = {"index", "artist", "album", "name","coverArt","year","id"}
@@ -304,6 +326,7 @@ def get_albums(page):
     except requests.RequestException as e:
         app.logger.error(f"Failed to get albums: {e}")
         return jsonify({'status': 'error', 'message': 'Failed to get albums'})
+
 
 @app.route('/get_album_details/<album_id>')
 def get_album_details(album_id):
