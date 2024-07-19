@@ -4,12 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="description" content="Explore a vast collection of TouHou music albums, discover artists.">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
     <meta name="application-name" content="TouhouMusicPlayer">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="mobile-web-app-capable" content="yes">
-    
+
     <!-- iPad and iPad mini (with @2× display) iOS ≥ 8 -->
     <link rel="apple-touch-icon-precomposed" sizes="180x180" href="{{ url_for('static', filename='icon/180.png') }}">
     <!-- iPad 3+ (with @2× display) iOS ≥ 7 -->
@@ -28,16 +29,22 @@
     <link rel="apple-touch-icon-precomposed" href="{{ url_for('static', filename='icon/180.png') }}">
     <!-- Fallback for everything else -->
     <link rel="shortcut icon" href="{{ url_for('static', filename='icon/180.png') }}">
-    
+
     <title>TouHou Music - Discover Albums, Artists, and Songs</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hover.css/2.1.1/css/hover-min.css"
         integrity="sha512-SJw7jzjMYJhsEnN/BuxTWXkezA2cRanuB8TdCNMXFJjxG9ZGSKOX5P3j03H6kdMxalKHZ7vlBMB4CagFP/de0A=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" integrity="sha512-jnSuA4Ss2PkkikSOLtYs8BlYIeeIK1h99ty4YfvRPAlzr377vr3CXDb7sb7eEEBYjDtcYj+AjBH3FLv5uSJuXg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap-grid.min.css" integrity="sha512-i1b/nzkVo97VN5WbEtaPebBG8REvjWeqNclJ6AItj7msdVcaveKrlIIByDpvjk5nwHjXkIqGZscVxOrTb9tsMA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.10.1/APlayer.min.css" integrity="sha512-CIYsJUa3pr1eoXlZFroEI0mq0UIMUqNouNinjpCkSWo3Bx5NRlQ0OuC6DtEB/bDqUWnzXc1gs2X/g52l36N5iw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css"
+        integrity="sha512-jnSuA4Ss2PkkikSOLtYs8BlYIeeIK1h99ty4YfvRPAlzr377vr3CXDb7sb7eEEBYjDtcYj+AjBH3FLv5uSJuXg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap-grid.min.css"
+        integrity="sha512-i1b/nzkVo97VN5WbEtaPebBG8REvjWeqNclJ6AItj7msdVcaveKrlIIByDpvjk5nwHjXkIqGZscVxOrTb9tsMA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.10.1/APlayer.min.css"
+        integrity="sha512-CIYsJUa3pr1eoXlZFroEI0mq0UIMUqNouNinjpCkSWo3Bx5NRlQ0OuC6DtEB/bDqUWnzXc1gs2X/g52l36N5iw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
 <body>
@@ -46,13 +53,16 @@
         <!-- 搜索栏 -->
         <div class="row mb-4 search-bar">
             <div id="search-input" class="col-lg-3 col-md-4 col-sm-12 mb-2 mb-sm-12">
-                <input type="text" id="search-input-text" class="form-control" placeholder="Search for albums artists or songs...">
+                <input type="text" id="search-input-text" class="form-control"
+                    placeholder="Search for albums artists or songs...">
             </div>
             <div id="search-button-div" class="col-lg-1 col-md-2 col-sm-6 col-6 mb-2 mb-sm-6">
-                <button id="search-button" class="btn btn-primary btn-block text-nowrap" onclick="globalsearch()">搜索</button>
+                <button id="search-button" class="btn btn-primary btn-block text-nowrap"
+                    onclick="globalsearch()">搜索</button>
             </div>
             <div class="col-lg-2 col-md-2 col-sm-6 col-6 mb-2 mb-sm-6">
-                <button id="showFavoriteBtn" class="btn btn-primary btn-block text-nowrap" onclick="displayFavoriteAlbums()">查看收藏</button>
+                <button id="showFavoriteBtn" class="btn btn-primary btn-block text-nowrap"
+                    onclick="displayFavoriteAlbums()">查看收藏</button>
             </div>
             <div id="dynamic" class="col-lg-2 col-md-3 col-sm-6 col-6 mb-2 mb-sm-0">
                 <select id="dynamic-select" class="form-control">
@@ -62,10 +72,14 @@
             <div class="col-md-4 col-sm-12 col-12">
                 <div class="row">
                     <div class="col-12 mb-sm-12 d-flex justify-content-between">
-                        <button id="up-button" class="btn btn-primary btn-block me-2 text-nowrap" onclick="upPage('0')">←</button>
-                        <button id="home-button" class="btn btn-primary btn-block me-2 text-nowrap" onclick="loadAlbums(globalpage)">🏠</button>
-                        <button id="down-button" class="btn btn-primary btn-block me-2 text-nowrap" onclick="downPage('0')">→</button>
-                        <button id="about-button" class="btn btn-primary btn-block text-nowrap" onclick="showPopup()">❗</button>
+                        <button id="up-button" class="btn btn-primary btn-block me-2 text-nowrap"
+                            onclick="upPage('0')">←</button>
+                        <button id="home-button" class="btn btn-primary btn-block me-2 text-nowrap"
+                            onclick="loadAlbums(globalpage)">🏠</button>
+                        <button id="down-button" class="btn btn-primary btn-block me-2 text-nowrap"
+                            onclick="downPage('0')">→</button>
+                        <button id="about-button" class="btn btn-primary btn-block text-nowrap"
+                            onclick="showPopup()">❗</button>
                     </div>
                 </div>
             </div>
@@ -77,11 +91,14 @@
                     <!-- 内容通过AJAX加载 -->
                 </div>
                 <div id="floating-buttons">
-                    <button id="randomalbum-button" class="btn btn-primary btn-block text-nowrap" onclick="loadAlbums(0,20)">最新专辑</button>
-                    <button id="randomalbum-button" class="btn btn-primary btn-block text-nowrap" onclick="loadAlbums(0,20,'random')">随机专辑</button>
-                    <button id="frequentalbum-button" class="btn btn-primary btn-block text-nowrap" onclick="loadAlbums(0,20,'frequent')">最受欢迎</button>
+                    <button id="randomalbum-button" class="btn btn-primary btn-block text-nowrap"
+                        onclick="loadAlbums(0,20)">最新专辑</button>
+                    <button id="randomalbum-button" class="btn btn-primary btn-block text-nowrap"
+                        onclick="loadAlbums(0,20,'random')">随机专辑</button>
+                    <button id="frequentalbum-button" class="btn btn-primary btn-block text-nowrap"
+                        onclick="loadAlbums(0,20,'frequent')">最受欢迎</button>
                     <div id="status-box">服务器状态</div>
-                </div>                
+                </div>
                 <div class="col-md-3 col-12 artistlist-div">
 
                     <div class="artistlist">
@@ -93,15 +110,11 @@
         </div>
 
         <div id="aplayer"></div>
-
+<!--
         <div id="loading-spinner" style="display: none;"></div>
-
         <div id="error-modal" style="display: none;">
-            <!-- Error modal HTML -->
             <div id="error-message"></div>
         </div>
-
-        <!-- 错误模态框 -->
         <div id="error-modal" class="modal fade" tabindex="-1" role="dialog">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -117,13 +130,18 @@
                 </div>
             </div>
         </div>
-
+-->
         <div id="popup"></div>
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.10.1/APlayer.min.js" integrity="sha512-RWosNnDNw8FxHibJqdFRySIswOUgYhFxnmYO3fp+BgCU7gfo4z0oS7mYFBvaa8qu+axY39BmQOrhW3Tp70XbaQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.4.0/color-thief.min.js" integrity="sha512-r2yd2GP87iHAsf2K+ARvu01VtR7Bs04la0geDLbFlB/38AruUbA5qfmtXwXx6FZBQGJRogiPtEqtfk/fnQfaYA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+            integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.10.1/APlayer.min.js"
+            integrity="sha512-RWosNnDNw8FxHibJqdFRySIswOUgYhFxnmYO3fp+BgCU7gfo4z0oS7mYFBvaa8qu+axY39BmQOrhW3Tp70XbaQ=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.4.0/color-thief.min.js"
+            integrity="sha512-r2yd2GP87iHAsf2K+ARvu01VtR7Bs04la0geDLbFlB/38AruUbA5qfmtXwXx6FZBQGJRogiPtEqtfk/fnQfaYA=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
         <script src="{{ url_for('static', filename='js/main.js') }}"></script>
         <script src="{{ url_for('static', filename='js/albums.js') }}"></script>
@@ -144,17 +162,16 @@
                 ap.skipForward()
             });
 
-            document.getElementById('search-input-text').addEventListener('keypress', function(event) {
-    if (event.key === 'Enter') {
-        document.getElementById('search-button').click();
-    }
-});
+            document.getElementById('search-input-text').addEventListener('keypress', function (event) {
+                if (event.key === 'Enter') {
+                    document.getElementById('search-button').click();
+                }
+            });
             var songlisteffcsion = "hvr-underline-reveal";
             var albumlistCoverSize = "300"
             var albumdtlCoverSize = "300"
             var playerCoverSize = "50"
             var albumliststyle = "col-xl-3 col-lg-3 col-md-3 col-sm-6 col-6 mb-4 hvr-grow"
-
         </script>
 </body>
 
