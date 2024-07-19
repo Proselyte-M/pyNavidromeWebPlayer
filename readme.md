@@ -7,7 +7,7 @@
 ### 2、修改代码中的以下部分
 ```
 SECRET_KEY = 'ppp' #用于加密流媒体url的密钥，用于防止超期播放
-SUBSONIC_API_URL = 'http://10.39.160.20:4533/rest' #你自己的subsonic服务器端API地址
+SUBSONIC_API_URL = 'http://127.0.0.1:4533/rest' #你自己的subsonic服务器端API地址
 API_VERSION = '1.16.1' #目前只用于这个版本的服务器端
 CLIENT_NAME = 'pywebplayer' #用于在你的subsonic服务器上显示客户端名称
 USERNAME = os.getenv('SUBSONIC_USERNAME', 'test')  # 你的subsonic服务器端用户名
