@@ -47,6 +47,7 @@ function getIndexes() {
     console.log('Loading Indexes...');
     $('#artistlist').html('<p>Loading artists list...</p>'); // 显示加载中信息
     $.getJSON('/getIndexes', function (data) {
+        console.debug(data)
         if (data.status === 'ok') {
             var indexHtml = '<h3>同人社团列表</h3>';
             data.indexes.index.forEach(function (list) {

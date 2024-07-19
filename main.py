@@ -441,6 +441,7 @@ def getIndexes():
         })
         app.logger.debug(f"api访问地址: {response.url}")
         response.raise_for_status()
+        print(response.url)
         if response.json()['subsonic-response']['status'] == 'ok':
             indexes = response.json()['subsonic-response'].get('indexes', {})
             fields_to_keep = {"index", "artist", "album", "name","id"}
