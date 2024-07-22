@@ -17,6 +17,10 @@ INDEXJSON_FILE_PATH = 'indexes.json' #当音乐库非常大时，读取艺术家
 CACHE_DURATION = 86400  # 缓存持续时间，以秒为单位，这里设为1小时
 CACHE_DIR = 'cover_cache' #用于缓存图片的目录
 ```
-### 3、运行start.cmd
+
+### 3、
+pip install -r requirements.txt
+
+### 4、运行start.cmd
 
 [DEMO地址](https://player.thmusic.top/)
