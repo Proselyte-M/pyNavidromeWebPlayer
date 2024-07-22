@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-Sitemap: https://player.thmusic.top/sitemap.xml
-Sitemap: https://player.thmusic.top/sitemap_with_schema.html
