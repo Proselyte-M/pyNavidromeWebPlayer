@@ -42,13 +42,13 @@ function checkUrlPage() {
 function upPage() {
     if (globalpage > 0) {
         globalpage--;
-        loadAlbums(globalpage);
+        loadAlbums(globalpage,20,'newest');
     }
 }
 
 function downPage() {
     globalpage++;
-    loadAlbums(globalpage);
+    loadAlbums(globalpage,20,'newest');
 }
 
 function showPopup() {

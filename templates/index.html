@@ -75,7 +75,7 @@
                         <button id="up-button" class="btn btn-primary btn-block me-2 text-nowrap"
                             onclick="upPage('0')">←</button>
                         <button id="home-button" class="btn btn-primary btn-block me-2 text-nowrap"
-                            onclick="loadAlbums(globalpage)">🏠</button>
+                            onclick="loadAlbums(globalpage,20,'newest')">🏠</button>
                         <button id="down-button" class="btn btn-primary btn-block me-2 text-nowrap"
                             onclick="downPage('0')">→</button>
                         <button id="about-button" class="btn btn-primary btn-block text-nowrap"
@@ -92,7 +92,7 @@
                 </div>
                 <div id="floating-buttons">
                     <button id="randomalbum-button" class="btn btn-primary btn-block text-nowrap"
-                        onclick="loadAlbums(0,20)">最新专辑</button>
+                        onclick="loadAlbums(0,20,'newest')">最新专辑</button>
                     <button id="randomalbum-button" class="btn btn-primary btn-block text-nowrap"
                         onclick="loadAlbums(0,20,'random')">随机专辑</button>
                     <button id="frequentalbum-button" class="btn btn-primary btn-block text-nowrap"

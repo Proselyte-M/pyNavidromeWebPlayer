@@ -1,4 +1,4 @@
-function loadAlbums(page, size = 20, type = 'newest') {
+function loadAlbums(page, size = 20, type = 'random') {
     var titleTest = ""
     if(type == 'newest'){
         updateButtonState(false);

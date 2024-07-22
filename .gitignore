@@ -4,5 +4,7 @@ cover_cache/
 thwikiinfo.db
 indexes.json
 templates/popup.html
-indexes.json
 thwikiinfo.db
+/static/favicon.ico
+/static/sitemap_with_schema.html
+/static/sitemap.xml
