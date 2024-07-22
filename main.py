@@ -173,7 +173,7 @@ def cache_cover_art(cover_art_id, token, salt, size, filetype):
                 'c': CLIENT_NAME,
                 'id': cover_art_id,
                 'size': size,
-                'f': filetype  # 指定获取的图片格式为 WebP
+                'f': filetype  
             })
             app.logger.debug(f"API 请求地址: {response.url}")
             response.raise_for_status()
