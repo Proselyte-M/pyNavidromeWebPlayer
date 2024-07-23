@@ -10,3 +10,7 @@ thwikiinfo.db
 /static/sitemap.xml
 /static/icon
 /static/robots.txt
+.DS_Store
+newweb/node_modules/
+newweb/dist/
+newweb/npm-debug.log
