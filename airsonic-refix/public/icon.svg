@@ -1,19 +1,23 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="512" height="512" fill="#09f" version="1.1" viewBox="0 0 135.47 135.47" xmlns="http://www.w3.org/2000/svg">
-  <g transform="translate(0 -161.53)">
-    <g transform="matrix(1.0344 0 0 1.0869 -2.0685 -19.991)">
-      <rect x="9.9294" y="224.55" width="5.9939" height="23.366" rx="2.997" ry="2.997" />
-      <rect x="19.849" y="215.2" width="5.9939" height="41.989" rx="2.997" ry="2.819" />
-      <rect x="29.768" y="211.49" width="5.9939" height="49.213" rx="2.997" ry="2.997" />
-      <rect x="39.688" y="202.01" width="5.9939" height="58.69" rx="2.997" ry="3.0381" />
-      <rect x="49.607" y="198.3" width="5.9939" height="62.402" rx="2.997" ry="2.997" />
-      <rect x="59.526" y="197.97" width="5.9939" height="62.733" rx="2.997" ry="2.997" />
-      <rect x="69.446" y="201.81" width="5.9939" height="58.889" rx="2.997" ry="2.997" />
-      <rect x="79.365" y="211.29" width="5.9939" height="49.412" rx="2.997" ry="2.997" />
-      <rect x="89.285" y="211.75" width="5.9939" height="48.948" rx="2.997" ry="2.997" />
-      <rect x="99.204" y="216.53" width="5.9939" height="44.176" rx="2.997" ry="2.997" />
-      <rect x="109.12" y="223.55" width="5.9939" height="36.886" rx="2.997" ry="2.997" />
-      <rect x="119.04" y="230.78" width="5.9939" height="22.372" rx="2.997" ry="2.997" />
+<svg width="135.47" height="135.47" xmlns="http://www.w3.org/2000/svg" version="1.1" fill="#09f">
+
+  <g>
+   <title>Layer 1</title>
+   <g stroke="null" id="svg_1">
+    <g stroke="null" id="svg_2" transform="matrix(1.05178 0 0 0.672465 -2.24103 -11.7383)">
+     <rect stroke="null" id="svg_3" ry="2.997" rx="2.997" height="23.366" width="5.9939" y="46.49314" x="9.9294"/>
+     <rect stroke="null" id="svg_4" ry="2.819" rx="2.997" height="41.989" width="5.9939" y="37.14314" x="19.849"/>
+     <rect stroke="null" id="svg_5" ry="2.997" rx="2.997" height="49.213" width="5.9939" y="33.43314" x="29.768"/>
+     <rect stroke="null" id="svg_6" ry="3.0381" rx="2.997" height="58.69" width="5.9939" y="23.95314" x="39.688"/>
+     <rect stroke="null" id="svg_7" ry="2.997" rx="2.997" height="62.402" width="5.9939" y="20.24314" x="49.607"/>
+     <rect stroke="null" id="svg_8" ry="2.997" rx="2.997" height="62.733" width="5.9939" y="19.91314" x="59.526"/>
+     <rect stroke="null" id="svg_9" ry="2.997" rx="2.997" height="58.889" width="5.9939" y="23.75314" x="69.446"/>
+     <rect stroke="null" id="svg_10" ry="2.997" rx="2.997" height="49.412" width="5.9939" y="33.23314" x="79.365"/>
+     <rect stroke="null" id="svg_11" ry="2.997" rx="2.997" height="48.948" width="5.9939" y="33.69314" x="89.285"/>
+     <rect stroke="null" id="svg_12" ry="2.997" rx="2.997" height="44.176" width="5.9939" y="38.47314" x="99.204"/>
+     <rect stroke="null" id="svg_13" ry="2.997" rx="2.997" height="36.886" width="5.9939" y="45.49314" x="109.12"/>
+     <rect stroke="null" id="svg_14" ry="2.997" rx="2.997" height="22.372" width="5.9939" y="52.72314" x="119.04"/>
     </g>
+   </g>
+   <text transform="matrix(1.25317 0 0 2.12503 -2.74609 18.2459)" stroke="#000" xml:space="preserve" text-anchor="start" font-family="'Antonio'" font-size="40" id="svg_15" y="50.24747" x="3.32368" stroke-width="0" fill="#005fbf">TouHou</text>
   </g>
-</svg>
+ </svg>
