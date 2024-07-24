@@ -8,7 +8,7 @@
     </div>
 
     <router-link class="nav-link" :to="{name: 'home'}" exact>
-      <Icon icon="discover" class="" /> 探索
+      <Icon icon="discover" class="" /> 主页
     </router-link>
 
     <router-link class="nav-link" :to="{name: 'queue'}">

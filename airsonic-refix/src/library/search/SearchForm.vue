@@ -4,7 +4,7 @@
       <input
         v-model="query"
         class="form-control mr-sm-2" type="search"
-        placeholder="Search">
+        placeholder="搜索专辑、歌曲、社团">
     </form>
   </div>
 </template>

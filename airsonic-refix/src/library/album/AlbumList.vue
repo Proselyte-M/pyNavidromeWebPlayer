@@ -19,17 +19,19 @@
           播放
         </ContextMenuItem>
         <ContextMenuItem icon="plus" @click="playNext(item.id)">
-          Play next
+          插入到播放列表
         </ContextMenuItem>
         <ContextMenuItem icon="plus" @click="playLater(item.id)">
-          Add to queue
+          添加到播放列表
         </ContextMenuItem>
+        <!--
         <ContextMenuItem
           :icon="favourites[item.id] ? 'heart-fill' : 'heart'"
           @click="toggleFavourite(item.id)"
         >
           Favourite
         </ContextMenuItem>
+        -->
       </template>
     </Tile>
   </Tiles>
