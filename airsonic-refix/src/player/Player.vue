@@ -51,6 +51,7 @@
                   />
                 </b-popover>
               </template>
+              <!--
               <b-button
                 title="Favourite"
                 variant="link" class="m-0"
@@ -59,6 +60,7 @@
               >
                 <Icon :icon="isFavourite ? 'heart-fill' : 'heart'" />
               </b-button>
+              -->
               <b-button id="player-volume-btn" variant="link" title="Volume">
                 <Icon :icon="isMuted ? 'mute' : 'volume'" />
               </b-button>
@@ -82,7 +84,7 @@
             <OverflowMenu class="d-md-none">
               <b-dropdown-text>
                 <div class="d-flex justify-content-between align-items-center">
-                  <strong>Volume</strong>
+                  <strong>音量</strong>
                   <Slider class="px-3" style="width: 120px;"
                           :min="0" :max="1" :step="0.01" percent
                           :value="volume" @input="setVolume"
@@ -91,7 +93,7 @@
               </b-dropdown-text>
               <b-dropdown-text v-if="track && track.isPodcast">
                 <div class="d-flex justify-content-between align-items-center">
-                  <strong>Speed</strong>
+                  <strong>速度</strong>
                   <Slider class="px-3" style="width: 120px;"
                           :min="0.7" :max="2" :step="0.1"
                           :value="playbackRate" @input="setPlaybackRate"
@@ -100,13 +102,13 @@
               </b-dropdown-text>
               <b-dropdown-text>
                 <div class="d-flex justify-content-between">
-                  <strong>Repeat</strong>
+                  <strong>重复</strong>
                   <SwitchInput :value="repeatActive" @input="toggleRepeat" />
                 </div>
               </b-dropdown-text>
               <b-dropdown-text>
                 <div class="d-flex justify-content-between">
-                  <strong>Shuffle</strong>
+                  <strong>随机</strong>
                   <SwitchInput :value="shuffleActive" @input="toggleShuffle" />
                 </div>
               </b-dropdown-text>

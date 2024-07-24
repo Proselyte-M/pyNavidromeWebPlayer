@@ -12,6 +12,7 @@
       <div class="mb-3">
         <strong>{{ item.albumCount }}</strong> 专辑 •
         <strong>{{ item.trackCount }}</strong> 歌曲
+        <!--
         <div v-if="item.genres.length > 0">
           <span v-for="({ name: genre }, index) in item.genres" :key="genre">
             <span v-if="index > 0">•</span>
@@ -20,6 +21,7 @@
             </router-link>
           </span>
         </div>
+        -->
       </div>
       <OverflowFade v-if="item.description || item.lastFmUrl || item.musicBrainzUrl" class="mb-3">
         {{ item.description }}
