@@ -6,7 +6,7 @@ export class AudioController {
   private volume = 1.0
   private fadeDuration = 200
   private buffer = new Audio()
-  private statsListener : any = null
+  private statsListener: any = null
 
   ontimeupdate: (value: number) => void = () => { /* do nothing */ }
   ondurationchange: (value: number) => void = () => { /* do nothing */ }
@@ -58,8 +58,9 @@ export class AudioController {
   async changeTrack(options: { url: string, paused?: boolean, isStream?: boolean, playbackRate?: number }) {
     if (this.audio) {
       this.cancelFade()
-      endPlayback(this.audio, this.fadeDuration)
+      await endPlayback(this.audio, this.fadeDuration)
     }
+
     this.audio = new Audio(options.url)
     this.audio.onerror = () => {
       this.onerror(this.audio.error)
@@ -152,7 +153,7 @@ export class AudioController {
   }
 }
 
-function endPlayback(audio: HTMLAudioElement, duration: number) {
+async function endPlayback(audio: HTMLAudioElement, duration: number) {
   async function fade(audio: HTMLAudioElement, from: number, to: number, duration: number) {
     if (duration <= 0.0) {
       audio.volume = to
@@ -167,7 +168,7 @@ function endPlayback(audio: HTMLAudioElement, duration: number) {
     }
     return audio
   }
-  console.info(`AudioController: ending payback for ${audio}`)
+  console.info(`AudioController: ending playback for ${audio}`)
   audio.ontimeupdate = null
   audio.ondurationchange = null
   audio.onpause = null
@@ -175,11 +176,11 @@ function endPlayback(audio: HTMLAudioElement, duration: number) {
   audio.onended = null
   audio.onloadedmetadata = null
   const startTime = Date.now()
-  fade(audio, audio.volume, 0.0, duration)
+  await fade(audio, audio.volume, 0.0, duration)
     .catch((err) => console.warn('Error during fade out: ' + err.stack))
     .finally(() => {
       audio.pause()
-      console.info(`AudioController: ending payback done. actual ${Date.now() - startTime}ms`)
+      console.info(`AudioController: ending playback done. actual ${Date.now() - startTime}ms`)
     })
 }
 

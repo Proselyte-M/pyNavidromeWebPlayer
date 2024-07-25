@@ -14,12 +14,12 @@ export class AuthService {
   private password = ''
   private authenticated = false
 
-  private defaultUsername = 'test'
-  private defaultPassword = 'test'
-  private defaultserver = 'https://play.thmusic.top'
+  private defaultUsername = ''
+  private defaultPassword = ''
+  private defaultServer = ''
 
   constructor() {
-    this.server = config.serverUrl || localStorage.getItem('server') || this.defaultserver
+    this.server = config.serverUrl || localStorage.getItem('server') || this.defaultServer
     this.username = localStorage.getItem('username') || this.defaultUsername
     this.salt = localStorage.getItem('salt') || ''
     this.hash = localStorage.getItem('hash') || ''
