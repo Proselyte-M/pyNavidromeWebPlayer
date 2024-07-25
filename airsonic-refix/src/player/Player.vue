@@ -112,7 +112,7 @@
                   <SwitchInput :value="shuffleActive" @input="toggleShuffle" />
                 </div>
               </b-dropdown-text>
-<!--
+              <!--
               <b-dropdown-text>
                 <div class="d-flex justify-content-between">
                   <strong>Favourite</strong>

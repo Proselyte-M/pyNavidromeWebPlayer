@@ -26,7 +26,7 @@
     <router-link class="nav-link" :to="{name: 'artists'}">
       <Icon icon="library" /> 社团列表
     </router-link>
-<!--
+    <!--
     <router-link class="nav-item nav-link" :to="{name: 'genres'}">
       <Icon icon="library" /> 风格列表
     </router-link>
@@ -35,7 +35,7 @@
     <router-link class="nav-link" :to="{name: 'playlists'}">
       <Icon icon="list" /> 歌单列表
     </router-link>
-<!--
+    <!--
     <router-link class="nav-link" :to="{name: 'favourites'}">
       <Icon icon="heart" /> 收藏歌曲
     </router-link>

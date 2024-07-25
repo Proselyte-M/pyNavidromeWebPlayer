@@ -5,4 +5,3 @@ declare namespace NodeJS {
       VUE_APP_DEFAULT_SERVER?: string;
     }
   }
-  
