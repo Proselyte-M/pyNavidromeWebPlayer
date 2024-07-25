@@ -14,16 +14,12 @@ export class AuthService {
   private password = ''
   private authenticated = false
 
-  private defaultUsername = ''
-  private defaultPassword = ''
-  private defaultServer = ''
-
   constructor() {
-    this.server = config.serverUrl || localStorage.getItem('server') || this.defaultServer
-    this.username = localStorage.getItem('username') || this.defaultUsername
+    this.server = config.serverUrl || localStorage.getItem('server') || process.env.VUE_APP_DEFAULT_SERVER
+    this.username = localStorage.getItem('username') || process.env.VUE_APP_DEFAULT_USERNAME
     this.salt = localStorage.getItem('salt') || ''
     this.hash = localStorage.getItem('hash') || ''
-    this.password = localStorage.getItem('password') || this.defaultPassword
+    this.password = localStorage.getItem('password') || process.env.VUE_APP_DEFAULT_PASSWORD
   }
 
   private saveSession() {
