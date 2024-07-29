@@ -7,27 +7,29 @@
       </button>
     </div>
 
-    <router-link class="nav-link" :to="{name: 'home'}" exact>
+    <router-link class="nav-link" :to="{ name: 'home' }" exact>
       <Icon icon="discover" class="" /> 主页
     </router-link>
 
-    <router-link class="nav-link" :to="{name: 'queue'}">
+    <router-link class="nav-link" :to="{ name: 'queue' }">
       <Icon icon="playlist" /> 播放列表
     </router-link>
 
     <a href="https://old-player.thmusic.top/" target="_blank" class="nav-link">
-  <span><Icon icon="radio" /> 旧版播放页面</span>
+      <span>
+        <Icon icon="radio" /> 旧版播放页面
+      </span>
     </a>
 
     <small class="sidebar-heading text-muted">
       音乐库
     </small>
 
-    <router-link class="nav-link" :to="{name: 'albums-default'}">
+    <router-link class="nav-link" :to="{ name: 'albums-default' }">
       <Icon icon="library" /> 专辑列表
     </router-link>
 
-    <router-link class="nav-link" :to="{name: 'artists'}">
+    <router-link class="nav-link" :to="{ name: 'artists' }">
       <Icon icon="library" /> 社团列表
     </router-link>
     <!--
@@ -36,7 +38,7 @@
     </router-link>
 -->
 
-    <router-link class="nav-link" :to="{name: 'playlists'}">
+    <router-link class="nav-link" :to="{ name: 'playlists' }">
       <Icon icon="list" /> 歌单列表
     </router-link>
     <!--
@@ -57,6 +59,10 @@
     </router-link>
 -->
     <PlaylistNav />
+  <div class="buildInfo">
+    <div>Build: {{ build }}</div>
+    <div>Build date: {{ buildDate }}</div>
+  </div>
   </nav>
 </template>
 <script lang="ts">
@@ -75,5 +81,23 @@
         store: useMainStore(),
       }
     },
+    props: {
+      visible: { type: Boolean, required: true },
+    },
+    computed: {
+      build: () => process.env.BUILD_HASH,
+      buildDate: () => process.env.BUILD_DATE,
+      url: () => 'https://github.com/tamland/airsonic-refix'
+    },
   })
 </script>
+
+<style>
+.buildInfo {
+  position: absolute; /* 或 absolute */
+  bottom: 0; /* 固定在页面底部 */
+  left: 0;
+  width: 100%; /* 覆盖页面的全宽 */
+  text-align: center; /* 文字居中 */
+}
+</style>
