@@ -15,6 +15,10 @@
       <Icon icon="playlist" /> 播放列表
     </router-link>
 
+    <a href="https://old-player.thmusic.top/" target="_blank" class="nav-link">
+  <span><Icon icon="radio" /> 旧版播放页面</span>
+    </a>
+
     <small class="sidebar-heading text-muted">
       音乐库
     </small>
