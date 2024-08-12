@@ -47,11 +47,13 @@
     </div>
     <div v-if="externalAlbumInfo" class="external-info">
     <h3 class="info-heading">来自THWiki的更多信息</h3>
-    <div v-if="externalAlbumInfo.coverurl" class="album-cover">
-      <a :href="externalAlbumInfo.coverurl" target="_blank" rel="noopener noreferrer">
-        <img :src="externalAlbumInfo.coverurl" alt="专辑封面" class="cover-image">
-      </a>
-    </div>
+    <div v-if="externalAlbumInfo.coverurl" style="display: flex; align-items: flex-start;">
+  <div style="flex-shrink: 0;">
+    <a :href="externalAlbumInfo.coverurl" target="_blank" rel="noopener noreferrer">
+      <img :src="externalAlbumInfo.coverurl" alt="专辑封面" :style="{ width: '300px', height: 'auto' }">
+    </a>
+  </div>
+  <div style="margin-left: 20px;">
     <p v-if="externalAlbumInfo.alname">
       <strong>专辑名称:</strong> {{ externalAlbumInfo.alname }}
     </p>
@@ -67,6 +69,8 @@
     <p v-if="externalAlbumInfo.coverchar">
       <strong>封面角色:</strong> {{ externalAlbumInfo.coverchar }}
     </p>
+  </div>
+</div>
     <div v-if="trackList.length">
       <h4 class="track-list-heading">曲目列表</h4>
       <table class="table table-striped">
