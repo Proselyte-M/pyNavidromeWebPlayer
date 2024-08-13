@@ -45,61 +45,8 @@
         <TrackList :tracks="album.tracks" no-album />
       </div>
     </div>
-    <div v-if="externalAlbumInfo" class="external-info">
-    <h3 class="info-heading">来自THWiki的更多信息</h3>
-    <div v-if="externalAlbumInfo.coverurl" style="display: flex; align-items: flex-start;">
-  <div style="flex-shrink: 0;">
-    <a :href="externalAlbumInfo.coverurl" target="_blank" rel="noopener noreferrer">
-      <img :src="externalAlbumInfo.coverurl" alt="专辑封面" :style="{ width: '300px', height: 'auto' }">
-    </a>
-  </div>
-  <div style="margin-left: 20px;">
-    <p v-if="externalAlbumInfo.alname">
-      <strong>专辑名称:</strong> {{ externalAlbumInfo.alname }}
-    </p>
-    <p v-if="externalAlbumInfo.circle">
-      <strong>社团名称:</strong> {{ externalAlbumInfo.circle }}
-    </p>
-    <p v-if="externalAlbumInfo.event">
-      <strong>发布展会:</strong> {{ externalAlbumInfo.event }}
-    </p>
-    <p v-if="externalAlbumInfo.date">
-      <strong>发布日期:</strong> {{ externalAlbumInfo.date }}
-    </p>
-    <p v-if="externalAlbumInfo.coverchar">
-      <strong>封面角色:</strong> {{ externalAlbumInfo.coverchar }}
-    </p>
-  </div>
-</div>
-    <div v-if="trackList.length">
-      <h4 class="track-list-heading">曲目列表</h4>
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>曲目名称</th>
-            <th>艺术家</th>
-            <th>编曲</th>
-            <th>演唱</th>
-            <th>作词</th>
-            <th>表演</th>
-            <th>原曲</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(track, index) in trackList" :key="index">
-            <td>{{ track.name }}</td>
-            <td>{{ track.artist }}</td>
-            <td>{{ track.arrange }}</td>
-            <td>{{ track.vocal }}</td>
-            <td>{{ track.lyric }}</td>
-            <td>{{ track.perform }}</td>
-            <td>{{ track.ogmusic }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    </div>
+    <WikiAlbumInfo :external-album-info="externalAlbumInfo" />
+    <WikiTrackList :track-list="trackList" />
   </div>
 </template>
 <script lang="ts">
@@ -109,10 +56,14 @@
   import { useFavouriteStore } from '@/library/favourite/store'
   import axios from 'axios'
   import stringSimilarity from 'string-similarity'
+  import WikiAlbumInfo from './WikiAlbumInfo.vue'
+  import WikiTrackList from './WikiTrackList.vue'
 
   export default defineComponent({
     components: {
       TrackList,
+      WikiAlbumInfo,
+      WikiTrackList,
     },
     props: {
       id: { type: String, required: true }
@@ -151,15 +102,23 @@
           l: '10',
           v: albumName
         }
+
         try {
           const searchResponse = await axios.get('https://thwiki.cc/album.php', { params: searchParams })
-          if (searchResponse.data && Array.isArray(searchResponse.data)) {
-            let jsonData = searchResponse.data as any[]
+
+          if (searchResponse.data) {
+            let jsonData: any[] = searchResponse.data
+
             if (typeof jsonData === 'string') {
-              jsonData = JSON.parse(jsonData)
+              try {
+                jsonData = JSON.parse(jsonData)
+              } catch (parseError) {
+                console.error('Error parsing JSON data:', parseError)
+                return
+              }
             }
 
-            const albumId = jsonData[0]?.[0] // 使用可选链避免错误
+            const albumId = jsonData[0]?.[0]
             if (albumId) {
               await this.fetchAlbumDetails(albumId)
             } else {

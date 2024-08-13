@@ -62,9 +62,9 @@
     },
     data() {
       return {
-        server: 'https://play.thmusic.top', // 默认值
-        username: 'test', // 默认值
-        password: 'test', // 默认值
+        server: process.env.VUE_APP_DEFAULT_SERVER, // 默认值
+        username: process.env.VUE_APP_DEFAULT_USERNAME, // 默认值
+        password: process.env.VUE_APP_DEFAULT_PASSWORD, // 默认值
         busy: false,
         error: null,
         displayForm: false,
